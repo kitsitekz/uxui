@@ -1,0 +1,892 @@
+<title>Курс UI/UX дизайна</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Концепт: холст дизайнера. Точечная сетка, модули как фреймы с метками, шесть цветов модулей. */
+:root{
+  --bg:#F4F5FA; --surface:#FFFFFF; --surface2:#ECEEF7; --ink:#12152B; --muted:#586079; --line:#D9DCEB;
+  --accent:#3347FF; --accent-ink:#FFFFFF; --dot:#CBD0E4; --ok:#0B7F57; --bad:#C0264B; --warn:#8A5A00;
+  --c1:#FF6B6B; --c2:#FFB020; --c3:#2BD48A; --c4:#2AA9F0; --c5:#9B7BFF; --c6:#FF5FA8;
+  --f-display:'Unbounded','Onest',system-ui,sans-serif; --f-body:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif; --f-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1020; --surface:#171A31; --surface2:#20244A; --ink:#EEF0FF; --muted:#A3A9CC; --line:#2D3260;
+    --accent:#8C9AFF; --accent-ink:#0E1020; --dot:#252A52; --ok:#4BE0A0; --bad:#FF7B9C; --warn:#FFC85A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1020; --surface:#171A31; --surface2:#20244A; --ink:#EEF0FF; --muted:#A3A9CC; --line:#2D3260;
+  --accent:#8C9AFF; --accent-ink:#0E1020; --dot:#252A52; --ok:#4BE0A0; --bad:#FF7B9C; --warn:#FFC85A; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background-color:var(--bg); color:var(--ink); font:400 16px/1.6 var(--f-body);
+  background-image:radial-gradient(var(--dot) 1px,transparent 1px); background-size:24px 24px;
+  padding-block:0 56px; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:700;line-height:1.2;margin:0;text-wrap:balance;letter-spacing:-.01em}
+p{margin:0 0 12px}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto}
+.mono{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+/* шапка */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line);margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px))) calc(-1*max(16px,env(safe-area-inset-right,0px)));padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+.top .wrap{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;gap:10px;align-items:center;font:700 15px var(--f-display);cursor:pointer;background:none;border:0;padding:0}
+.brand i{display:grid;grid-template-columns:repeat(3,8px);gap:2px}
+.brand i b{width:8px;height:8px;border-radius:2px}
+.nav{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface2);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 16px;font-weight:600;font-size:15px;cursor:pointer;min-height:42px}
+.btn:hover{border-color:var(--accent)}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.sm{padding:5px 12px;min-height:34px;font-size:14px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn.on{background:var(--surface2);border-color:var(--accent)}
+/* герой */
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center;padding-block:36px 24px}
+.hero h1{font-size:clamp(28px,4.6vw,46px);margin:10px 0 14px}
+.hero p.lead{font-size:18px;color:var(--muted);max-width:56ch}
+.hero .fig{margin:0}
+.cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+/* карточки */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.card+.card{margin-top:16px}
+.panel{display:grid;gap:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.sect{margin-top:36px}
+.sect>h2{font-size:22px;margin-bottom:6px}
+.sect>.sub{color:var(--muted);margin-bottom:16px}
+.prog{height:10px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.prog>span{display:block;height:100%;background:var(--accent);border-radius:99px}
+/* модули */
+.mod{display:flex;flex-direction:column;gap:12px;min-width:0}
+.mod .tag{display:inline-flex;align-items:center;gap:8px}
+.mod .tag b{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--mc)}
+.mod .num{font:700 40px/1 var(--f-display);color:var(--ink)}
+.mod h3{font-size:16px;line-height:1.35}
+.mod .meta{font-size:13px;color:var(--muted)}
+.mod .foot{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mod.locked{background:var(--surface2)}
+.st{font-size:13px;font-weight:600;border-radius:999px;padding:3px 10px;background:var(--surface2);border:1px solid var(--line)}
+.st.ok{color:var(--ok);border-color:currentColor;background:transparent}
+.st.lock{color:var(--muted)}
+.codebox{display:flex;gap:6px;flex-wrap:wrap}
+.codebox input{width:150px;min-height:34px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:4px 10px;font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.1em}
+.err{color:var(--bad);font-size:14px;font-weight:600}
+/* страница модуля */
+.mhead{border:1px solid var(--line);border-radius:14px;background:var(--surface);overflow:hidden}
+.mhead .band{background:var(--mc);color:#12152B;padding:10px 22px}
+.mhead .band .mono{color:#12152B}
+.mhead .body{padding:22px}
+.mhead h1{font-size:clamp(22px,3.4vw,32px);margin-bottom:12px}
+.can{margin:0;padding-left:20px;color:var(--muted)}
+.tabs{display:flex;gap:6px;margin:18px 0;flex-wrap:wrap}
+.tabs .btn{min-width:120px}
+.th h3{font-size:20px;margin-bottom:12px}
+.terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:10px;margin:14px 0 0}
+.term{background:var(--surface2);border-radius:10px;padding:10px 14px;min-width:0}
+.term b{display:block;font-size:14px}
+.term span{font-size:14px;color:var(--muted)}
+.fig{margin:16px 0;overflow-x:auto}
+.fig svg{display:block;width:100%;max-width:680px;height:auto;margin:0 auto}
+.fig svg .t{font:500 13px var(--f-body)}
+.fig svg .b{font-weight:700}
+.fig svg .s{font-size:11px}
+.fig svg .ink{fill:var(--ink)} .fig svg .mu{fill:var(--muted)} .fig svg .dk{fill:#12152B}
+.fig svg .sf{fill:var(--surface)} .fig svg .s2{fill:var(--surface2)}
+.fig svg .ln{stroke:var(--line);stroke-width:1.5} .fig svg .ln2{stroke:var(--muted);stroke-width:2;fill:none}
+.fig svg .k1{fill:var(--c1)} .fig svg .k2{fill:var(--c2)} .fig svg .k3{fill:var(--c3)} .fig svg .k4{fill:var(--c4)} .fig svg .k5{fill:var(--c5)} .fig svg .k6{fill:var(--c6)}
+.fig svg .ak{fill:var(--accent)}
+.fig figcaption{font-size:13px;color:var(--muted);text-align:center;margin-top:6px}
+.task h3{font-size:18px;margin:6px 0 10px}
+.task ol,.task ul{margin:0 0 12px;padding-left:22px}
+.task li{margin-bottom:4px}
+.task .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.kind{display:inline-block;font:500 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;background:var(--mc);color:#12152B;border-radius:6px;padding:2px 8px}
+.res{background:var(--surface2);border-radius:10px;padding:10px 14px;font-size:15px;margin-bottom:10px}
+/* тест */
+.q h3{font-size:19px;margin:10px 0 16px}
+.opt{display:block;width:100%;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 16px;margin-bottom:10px;cursor:pointer;font-size:16px}
+.opt:hover:not([disabled]){border-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--surface))}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--surface))}
+.note{border-radius:10px;padding:12px 14px;background:var(--surface2);font-size:15px;margin:6px 0 14px}
+.score{font:700 56px/1 var(--f-display)}
+.review{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;font-size:15px}
+.review .ok{color:var(--ok);font-weight:600} .review .bad{color:var(--bad);font-weight:600}
+/* формы */
+.field{display:grid;gap:4px;margin-bottom:12px}
+.field label{font-weight:600;font-size:14px}
+.inp{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;min-height:42px;width:100%}
+textarea.inp{min-height:90px;font-family:var(--f-mono);font-size:12px;word-break:break-all}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+/* таблицы */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap}
+th{background:var(--surface2);font-weight:600}
+tr:last-child td{border-bottom:0}
+tr.sel td{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.gr{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.gr .field{margin:0}
+.gr input{min-height:36px;padding:4px 8px}
+.code{font:600 16px var(--f-mono);letter-spacing:.12em;background:var(--surface2);border-radius:8px;padding:3px 10px}
+#cert{width:100%;height:auto;border:1px solid var(--line);border-radius:10px;background:#fff;display:block}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:600;z-index:20;max-width:92vw}
+.back{background:none;border:0;padding:6px 0;color:var(--muted);font-weight:600;cursor:pointer;margin-bottom:8px}
+footer{margin-top:48px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}
+@media (max-width:760px){.hero{grid-template-columns:1fr}.two{grid-template-columns:1fr}.nav{margin-left:0;width:100%}}
+@media (prefers-reduced-motion:no-preference){.btn,.opt{transition:border-color .15s,background .15s}}
+</style>
+
+<div class="top"><div class="wrap" id="top"></div></div>
+<div class="wrap" id="app"></div>
+<div id="toast-host"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- Иллюстрации ---------- */
+const wheel=(()=>{let s='';for(let k=0;k<12;k++){const a=(k*30-90)*Math.PI/180;const x=140+Math.cos(a)*92,y=130+Math.sin(a)*92;s+='<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="22" fill="hsl('+(k*30)+',78%,58%)"/>';}return s;})();
+const FIG={
+hero:`<svg viewBox="0 0 360 330" role="img" aria-label="Иллюстрация: макет мобильного экрана в редакторе">
+<text x="20" y="22" class="mu" style="font:500 11px var(--f-mono)">Frame 1 · 390 × 844</text>
+<rect x="20" y="32" width="170" height="280" rx="18" class="sf ln"/>
+<rect x="34" y="48" width="142" height="22" rx="6" class="k2"/>
+<rect x="34" y="80" width="142" height="84" rx="10" class="k4"/>
+<rect x="34" y="174" width="66" height="50" rx="8" class="s2"/><rect x="110" y="174" width="66" height="50" rx="8" class="s2"/>
+<rect x="34" y="236" width="142" height="12" rx="6" class="s2"/><rect x="34" y="256" width="100" height="12" rx="6" class="s2"/>
+<rect x="34" y="278" width="142" height="26" rx="13" class="k1"/>
+<rect x="212" y="52" width="130" height="90" rx="12" class="k5"/>
+<rect x="212" y="156" width="130" height="60" rx="12" class="k3"/>
+<rect x="212" y="230" width="62" height="62" rx="31" class="k6"/><rect x="284" y="230" width="58" height="62" rx="12" class="k2"/>
+<path d="M150 150 L150 190 L160 181 L168 198 L174 195 L166 178 L178 178 Z" class="ink"/>
+<rect x="170" y="196" width="40" height="20" rx="10" class="ak"/><text x="190" y="210" text-anchor="middle" style="font:600 11px var(--f-body);fill:var(--accent-ink)">Вы</text>
+</svg>`,
+ui_ux:`<svg viewBox="0 0 640 250" role="img" aria-label="Схема: UI и UX вместе образуют продукт">
+<rect x="10" y="10" width="300" height="190" rx="14" class="sf ln"/>
+<text x="28" y="38" class="t b ink">UI: что видит пользователь</text>
+<rect x="28" y="52" width="264" height="26" rx="7" class="k2"/>
+<rect x="28" y="88" width="126" height="64" rx="9" class="k4"/><rect x="166" y="88" width="126" height="64" rx="9" class="s2"/>
+<rect x="28" y="162" width="104" height="26" rx="13" class="k1"/><text x="80" y="179" text-anchor="middle" class="t b dk">Кнопка</text>
+<rect x="330" y="10" width="300" height="190" rx="14" class="sf ln"/>
+<text x="348" y="38" class="t b ink">UX: как человек идёт к цели</text>
+<path d="M402 122 L452 90 M402 122 L452 158 M484 90 L548 122 M484 158 L548 122" class="ln2"/>
+<rect x="346" y="106" width="56" height="32" rx="8" class="k3"/><text x="374" y="126" text-anchor="middle" class="t b dk">Старт</text>
+<rect x="436" y="74" width="62" height="32" rx="8" class="k4"/><text x="467" y="94" text-anchor="middle" class="t b dk">Поиск</text>
+<rect x="436" y="142" width="74" height="32" rx="8" class="k5"/><text x="473" y="162" text-anchor="middle" class="t b dk">Каталог</text>
+<rect x="540" y="106" width="76" height="32" rx="8" class="k1"/><text x="578" y="126" text-anchor="middle" class="t b dk">Оплата</text>
+<text x="320" y="234" text-anchor="middle" class="t b ink">Хороший продукт = понятный UX + аккуратный UI</text>
+</svg>`,
+process:`<svg viewBox="0 0 640 210" role="img" aria-label="Пять этапов цикла Design Thinking">
+<rect x="6" y="14" width="118" height="64" rx="12" class="k1"/><rect x="132" y="14" width="118" height="64" rx="12" class="k2"/><rect x="258" y="14" width="118" height="64" rx="12" class="k3"/><rect x="384" y="14" width="118" height="64" rx="12" class="k4"/><rect x="510" y="14" width="124" height="64" rx="12" class="k5"/>
+<g class="t b dk" text-anchor="middle"><text x="65" y="42">1 Эмпатия</text><text x="191" y="42">2 Проблема</text><text x="317" y="42">3 Идеи</text><text x="443" y="42">4 Прототип</text><text x="572" y="42">5 Тест</text></g>
+<g class="t s dk" text-anchor="middle"><text x="65" y="62">Исследуем</text><text x="191" y="62">Формулируем</text><text x="317" y="62">Придумываем</text><text x="443" y="62">Собираем</text><text x="572" y="62">Проверяем</text></g>
+<path d="M572 80 V132 H65 V86" class="ln2"/><path d="M59 94 L65 82 L71 94 Z" class="mu"/>
+<text x="320" y="164" text-anchor="middle" class="t b ink">Итерации: результат теста возвращает нас к идеям и прототипу</text>
+<text x="320" y="190" text-anchor="middle" class="t s mu">Цикл повторяется, пока решение не станет понятным и полезным</text>
+</svg>`,
+triangle:`<svg viewBox="0 0 640 250" role="img" aria-label="Три опоры дизайн-стратегии">
+<polygon points="320,36 120,212 520,212" class="s2 ln"/>
+<circle cx="320" cy="36" r="20" class="k4"/><circle cx="120" cy="212" r="20" class="k3"/><circle cx="520" cy="212" r="20" class="k5"/>
+<text x="352" y="34" class="t b ink">Функциональность</text><text x="352" y="52" class="t s mu">что умеет продукт</text>
+<text x="146" y="238" class="t b ink">Удобство</text><text x="214" y="238" class="t s mu">как легко им пользоваться</text>
+<text x="400" y="238" class="t b ink">Эстетика</text><text x="470" y="238" class="t s mu">как выглядит</text>
+<text x="320" y="150" text-anchor="middle" class="t b ink">Баланс</text><text x="320" y="168" text-anchor="middle" class="t s mu">стратегия связывает цели и пользователей</text>
+</svg>`,
+fidelity:`<svg viewBox="0 0 640 250" role="img" aria-label="Три уровня детализации макета">
+<g><rect x="10" y="10" width="190" height="200" rx="10" class="sf ln"/><rect x="24" y="24" width="162" height="20" rx="3" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/><rect x="24" y="54" width="162" height="70" rx="3" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/><path d="M24 54 L186 124 M186 54 L24 124" stroke="var(--line)"/><rect x="24" y="134" width="100" height="10" rx="3" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/><rect x="24" y="152" width="70" height="26" rx="3" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/></g>
+<g><rect x="225" y="10" width="190" height="200" rx="10" class="sf ln"/><rect x="239" y="24" width="162" height="20" rx="3" class="s2"/><rect x="239" y="54" width="162" height="70" rx="3" class="s2"/><text x="320" y="94" text-anchor="middle" class="t s mu">Изображение</text><rect x="239" y="134" width="120" height="8" rx="3" class="s2"/><rect x="239" y="148" width="90" height="8" rx="3" class="s2"/><rect x="239" y="166" width="70" height="26" rx="3" class="s2"/><text x="274" y="183" text-anchor="middle" class="t s ink">Кнопка</text></g>
+<g><rect x="440" y="10" width="190" height="200" rx="10" class="sf ln"/><rect x="454" y="24" width="162" height="20" rx="6" class="k2"/><rect x="454" y="54" width="162" height="70" rx="8" class="k4"/><rect x="454" y="134" width="120" height="8" rx="4" class="s2"/><rect x="454" y="148" width="90" height="8" rx="4" class="s2"/><rect x="454" y="166" width="82" height="26" rx="13" class="k1"/><text x="495" y="183" text-anchor="middle" class="t s b dk">Купить</text></g>
+<g class="t b ink" text-anchor="middle"><text x="105" y="234">Low-fi: набросок</text><text x="320" y="234">Mid-fi: блоки и тексты</text><text x="535" y="234">Hi-fi: почти финал</text></g>
+</svg>`,
+type:`<svg viewBox="0 0 640 240" role="img" aria-label="Иерархия текста и модульная шкала размеров">
+<rect x="10" y="10" width="330" height="210" rx="12" class="sf ln"/>
+<text x="28" y="52" class="ink" style="font:700 30px var(--f-display)">Заголовок</text><text x="28" y="60" class="mu" style="font:500 10px var(--f-mono)"></text>
+<text x="28" y="86" class="mu" style="font:500 11px var(--f-mono)">H1 · 32/40 · 700</text>
+<text x="28" y="120" class="ink" style="font:600 20px var(--f-body)">Подзаголовок раздела</text>
+<text x="28" y="140" class="mu" style="font:500 11px var(--f-mono)">H2 · 20/28 · 600</text>
+<text x="28" y="168" class="ink" style="font:400 16px var(--f-body)">Основной текст читается легко.</text>
+<text x="28" y="186" class="mu" style="font:500 11px var(--f-mono)">Body · 16/24 · 400</text>
+<text x="28" y="208" class="mu" style="font:400 12px var(--f-body)">Подпись и вспомогательный текст</text>
+<g class="ink" style="font-family:var(--f-body);font-weight:600"><text x="372" y="190" style="font-size:12px">Aa</text><text x="404" y="190" style="font-size:16px">Aa</text><text x="446" y="190" style="font-size:20px">Aa</text><text x="494" y="190" style="font-size:25px">Aa</text><text x="552" y="190" style="font-size:31px">Aa</text></g>
+<text x="372" y="40" class="t b ink">Модульная шкала ×1,25</text>
+<text x="372" y="62" class="t s mu">12 · 16 · 20 · 25 · 31 px</text>
+<text x="372" y="84" class="t s mu">Каждый шаг больше предыдущего</text>
+<text x="372" y="100" class="t s mu">в одно и то же число раз.</text>
+<path d="M372 204 H600" class="ln2"/>
+</svg>`,
+color:`<svg viewBox="0 0 640 260" role="img" aria-label="Цветовой круг и правило 60-30-10">
+<g>${wheel}</g>
+<line x1="140" y1="38" x2="140" y2="222" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="140" y="130" text-anchor="middle" class="t b ink">комплементарные</text><text x="140" y="146" text-anchor="middle" class="t s mu">напротив друг друга</text>
+<text x="330" y="40" class="t b ink">Правило 60-30-10</text>
+<rect x="330" y="54" width="180" height="40" class="s2 ln"/><rect x="510" y="54" width="90" height="40" class="k4"/><rect x="600" y="54" width="30" height="40" class="k1"/>
+<text x="420" y="112" text-anchor="middle" class="t s mu">60% основной</text><text x="555" y="112" text-anchor="middle" class="t s mu">30%</text><text x="615" y="112" text-anchor="middle" class="t s mu">10%</text>
+<text x="330" y="150" class="t b ink">Фон и нейтральные</text><text x="330" y="168" class="t s mu">спокойная основа экрана</text>
+<text x="330" y="196" class="t b ink">Вторичный цвет</text><text x="330" y="214" class="t s mu">блоки, заголовки, навигация</text>
+<text x="330" y="242" class="t b ink">Акцент</text><text x="388" y="242" class="t s mu">кнопка действия, важная метка</text>
+</svg>`,
+flow:`<svg viewBox="0 0 640 260" role="img" aria-label="Пользовательский поток покупки">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--muted)"/></marker></defs>
+<rect x="8" y="40" width="100" height="40" rx="20" class="k3"/><text x="58" y="65" text-anchor="middle" class="t b dk">Вход в приложение</text>
+<rect x="140" y="40" width="96" height="40" rx="8" class="k4"/><text x="188" y="65" text-anchor="middle" class="t b dk">Каталог</text>
+<polygon points="330,24 392,60 330,96 268,60" class="k2"/><text x="330" y="64" text-anchor="middle" class="t b dk">В наличии?</text>
+<rect x="426" y="40" width="84" height="40" rx="8" class="k5"/><text x="468" y="65" text-anchor="middle" class="t b dk">Корзина</text>
+<rect x="540" y="40" width="92" height="40" rx="8" class="k1"/><text x="586" y="65" text-anchor="middle" class="t b dk">Оплата</text>
+<rect x="266" y="150" width="128" height="40" rx="8" class="k6"/><text x="330" y="175" text-anchor="middle" class="t b dk">Уведомить</text>
+<g fill="none" stroke="var(--muted)" stroke-width="2"><path d="M108 60 H138" marker-end="url(#ar)"/><path d="M236 60 H266" marker-end="url(#ar)"/><path d="M392 60 H424" marker-end="url(#ar)"/><path d="M510 60 H538" marker-end="url(#ar)"/><path d="M330 96 V148" marker-end="url(#ar)"/></g>
+<text x="408" y="52" class="t s ink">Да</text><text x="340" y="128" class="t s ink">Нет</text>
+<text x="10" y="228" class="t b ink">Состояния каждого экрана:</text>
+<rect x="190" y="212" width="78" height="22" rx="11" class="s2 ln"/><text x="229" y="227" text-anchor="middle" class="t s ink">пусто</text>
+<rect x="276" y="212" width="86" height="22" rx="11" class="s2 ln"/><text x="319" y="227" text-anchor="middle" class="t s ink">загрузка</text>
+<rect x="370" y="212" width="78" height="22" rx="11" class="s2 ln"/><text x="409" y="227" text-anchor="middle" class="t s ink">ошибка</text>
+<rect x="456" y="212" width="78" height="22" rx="11" class="s2 ln"/><text x="495" y="227" text-anchor="middle" class="t s ink">успех</text>
+</svg>`,
+responsive:`<svg viewBox="0 0 640 250" role="img" aria-label="Один интерфейс на экранах трёх размеров">
+<rect x="40" y="24" width="84" height="160" rx="12" class="sf ln"/><rect x="50" y="38" width="64" height="22" rx="4" class="k2"/><rect x="50" y="68" width="64" height="40" rx="4" class="k4"/><rect x="50" y="116" width="64" height="30" rx="4" class="s2"/><rect x="50" y="154" width="64" height="20" rx="4" class="k1"/>
+<rect x="190" y="44" width="170" height="130" rx="10" class="sf ln"/><rect x="202" y="56" width="146" height="18" rx="4" class="k2"/><rect x="202" y="82" width="70" height="50" rx="4" class="k4"/><rect x="278" y="82" width="70" height="50" rx="4" class="k3"/><rect x="202" y="140" width="70" height="26" rx="4" class="s2"/><rect x="278" y="140" width="70" height="26" rx="4" class="k1"/>
+<rect x="400" y="24" width="230" height="150" rx="8" class="sf ln"/><rect x="412" y="34" width="206" height="16" rx="4" class="k2"/><rect x="412" y="58" width="46" height="60" rx="4" class="k4"/><rect x="464" y="58" width="46" height="60" rx="4" class="k3"/><rect x="516" y="58" width="46" height="60" rx="4" class="k5"/><rect x="568" y="58" width="50" height="60" rx="4" class="k6"/><rect x="412" y="126" width="206" height="14" rx="4" class="s2"/><rect x="412" y="148" width="80" height="18" rx="4" class="k1"/>
+<rect x="490" y="174" width="50" height="8" class="s2"/>
+<g class="t b ink" text-anchor="middle"><text x="82" y="208">Телефон</text><text x="275" y="208">Планшет</text><text x="515" y="208">Компьютер</text></g>
+<g class="t s mu" text-anchor="middle"><text x="82" y="226">390 px · 1 колонка</text><text x="275" y="226">768 px · 2 колонки</text><text x="515" y="226">1440 px · 4 колонки</text></g>
+</svg>`,
+vr:`<svg viewBox="0 0 640 250" role="img" aria-label="Три и шесть степеней свободы в VR">
+<defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="var(--ink)"/></marker></defs>
+<rect x="10" y="10" width="300" height="190" rx="14" class="sf ln"/><rect x="330" y="10" width="300" height="190" rx="14" class="sf ln"/>
+<g><circle cx="160" cy="100" r="34" class="s2 ln"/><rect x="134" y="92" width="52" height="20" rx="8" class="k4"/>
+<path d="M106 70 A60 60 0 0 1 214 70" fill="none" stroke="var(--ink)" stroke-width="2.5" marker-end="url(#ar2)"/><path d="M214 132 A60 60 0 0 1 106 132" fill="none" stroke="var(--ink)" stroke-width="2.5" marker-end="url(#ar2)"/></g>
+<g><circle cx="480" cy="100" r="34" class="s2 ln"/><rect x="454" y="92" width="52" height="20" rx="8" class="k5"/>
+<path d="M426 70 A60 60 0 0 1 534 70" fill="none" stroke="var(--ink)" stroke-width="2.5" marker-end="url(#ar2)"/>
+<path d="M480 150 V186" stroke="var(--ink)" stroke-width="2.5" marker-end="url(#ar2)"/><path d="M420 100 H350" stroke="var(--ink)" stroke-width="2.5" marker-end="url(#ar2)"/><path d="M540 100 H610" stroke="var(--ink)" stroke-width="2.5" marker-end="url(#ar2)"/></g>
+<text x="160" y="46" text-anchor="middle" class="t b ink">3DoF</text><text x="480" y="46" text-anchor="middle" class="t b ink">6DoF</text>
+<text x="160" y="226" text-anchor="middle" class="t s mu">только повороты головы</text><text x="480" y="226" text-anchor="middle" class="t s mu">повороты + перемещение в пространстве</text>
+</svg>`,
+access:`<svg viewBox="0 0 640 220" role="img" aria-label="Три примера контраста текста и фона">
+<rect x="10" y="10" width="190" height="110" rx="12" fill="#FFFFFF" stroke="var(--line)"/><text x="105" y="76" text-anchor="middle" style="font:700 26px var(--f-body)" fill="#12152B">Aa Текст</text>
+<rect x="225" y="10" width="190" height="110" rx="12" fill="#FFFFFF" stroke="var(--line)"/><text x="320" y="76" text-anchor="middle" style="font:700 26px var(--f-body)" fill="#767676">Aa Текст</text>
+<rect x="440" y="10" width="190" height="110" rx="12" fill="#FFFFFF" stroke="var(--line)"/><text x="535" y="76" text-anchor="middle" style="font:700 26px var(--f-body)" fill="#AAAAAA">Aa Текст</text>
+<g text-anchor="middle"><text x="105" y="150" class="t b ink">Очень высокий контраст</text><text x="105" y="170" class="t s mu">тёмный на белом</text>
+<text x="320" y="150" class="t b ink">≈ 4,5:1 · уровень AA</text><text x="320" y="170" class="t s mu">граница допустимого для текста</text>
+<text x="535" y="150" class="t b ink">≈ 2,3:1 · не проходит</text><text x="535" y="170" class="t s mu">слишком бледно</text></g>
+<text x="320" y="204" text-anchor="middle" class="t s mu">Для обычного текста WCAG AA требует не менее 4,5:1, для крупного текста и значков не менее 3:1</text>
+</svg>`,
+story:`<svg viewBox="0 0 640 200" role="img" aria-label="Структура кейса из пяти шагов">
+<path d="M64 60 H576" class="ln2"/>
+<circle cx="64" cy="60" r="26" class="k1"/><circle cx="192" cy="60" r="26" class="k2"/><circle cx="320" cy="60" r="26" class="k3"/><circle cx="448" cy="60" r="26" class="k4"/><circle cx="576" cy="60" r="26" class="k5"/>
+<g class="t b dk" text-anchor="middle" style="font-size:16px"><text x="64" y="66">1</text><text x="192" y="66">2</text><text x="320" y="66">3</text><text x="448" y="66">4</text><text x="576" y="66">5</text></g>
+<g class="t b ink" text-anchor="middle"><text x="64" y="118">Контекст</text><text x="192" y="118">Проблема</text><text x="320" y="118">Решение</text><text x="448" y="118">Доказательства</text><text x="576" y="118">Результат</text></g>
+<g class="t s mu" text-anchor="middle"><text x="64" y="138">для кого, зачем</text><text x="192" y="138">что не работало</text><text x="320" y="138">макеты и логика</text><text x="448" y="138">тесты, данные</text><text x="576" y="138">что улучшилось</text></g>
+<text x="320" y="182" text-anchor="middle" class="t b ink">Показывайте путь, а не только финальную картинку</text>
+</svg>`
+};
+
+/* ---------- Содержание курса ---------- */
+const MODS=[
+{id:'m1',c:'var(--c1)',short:'Введение',title:'Введение в дизайн пользовательских интерфейсов. Принципы UX/UI и цифровых реальностей',
+ can:['отличать UI от UX и объяснять их роль в продукте','оценивать интерфейс по эвристикам Нильсена','различать веб, мобильные интерфейсы, VR, AR и MR'],
+ theory:[
+ {h:'Что такое интерфейс',p:['Интерфейс — граница, через которую человек и система обмениваются информацией и командами. Пользовательский интерфейс включает всё, что человек видит и с чем действует: экраны, кнопки, тексты, значки, жесты и голосовые команды.','Главная задача интерфейса — помочь человеку достичь цели быстро, без ошибок и без лишних объяснений.'],
+  terms:[['GUI','Графический интерфейс: окна, кнопки, значки, меню.'],['CLI','Интерфейс командной строки: действия вводятся текстом.'],['NUI','Естественный интерфейс: жесты, голос, касание, взгляд.'],['Элемент управления','Кнопка, поле, переключатель, ползунок: то, чем человек действует.'],['Аффорданс','Свойство объекта подсказывать способ использования. Кнопка выглядит так, будто её можно нажать.']]},
+ {h:'UI и UX: в чём разница',fig:'ui_ux',p:['UI (User Interface) отвечает за внешний вид и элементы управления: цвет, шрифты, сетку, компоненты. UX (User Experience) описывает весь опыт человека: понятно ли, быстро ли, приятно ли достичь цели.','Красивый интерфейс без продуманного UX раздражает. Удобный сценарий без аккуратного UI выглядит сырым. Сильный продукт держится на обоих.'],
+  terms:[['UX-дизайнер','Изучает пользователей, проектирует сценарии, структуру и поведение продукта.'],['UI-дизайнер','Создаёт визуальный язык, макеты и компоненты.'],['Персона','Собирательный образ типичного пользователя с целями и болями.'],['Customer Journey Map','Карта пути пользователя от первой потребности до результата.'],['Pain point','Болевая точка: место пути, где человеку трудно или неприятно.']]},
+ {h:'Принципы хорошего интерфейса: 10 эвристик Нильсена',p:['Эвристики Якоба Нильсена — десять общих правил, по которым эксперт проверяет интерфейс. Их используют для быстрого аудита до тестирования с людьми.'],
+  terms:[['1. Видимость состояния','Система сообщает, что происходит: загрузка, шаг, результат.'],['2. Соответствие реальному миру','Язык и образы понятны пользователю, а не разработчику.'],['3. Свобода и контроль','Есть «отмена», «назад», выход из случайного действия.'],['4. Согласованность и стандарты','Одинаковые вещи выглядят и работают одинаково.'],['5. Предотвращение ошибок','Лучше не допустить ошибку, чем красиво её объяснить.'],['6. Узнавание вместо запоминания','Нужное видно на экране, его не надо держать в голове.'],['7. Гибкость и эффективность','Новичку просто, опытному быстро: горячие клавиши, шаблоны.'],['8. Эстетика и минимализм','Нет лишней информации, она отвлекает от главного.'],['9. Помощь с ошибками','Сообщение об ошибке простое и подсказывает, как исправить.'],['10. Справка','Подсказки и документация находятся быстро и отвечают на задачу.']]},
+ {h:'Процесс проектирования',fig:'process',p:['Проектирование интерфейса — цикл, а не прямая линия. Сначала узнаём людей, затем формулируем проблему, придумываем решения, собираем прототип и проверяем его на пользователях. По итогам возвращаемся на нужный шаг.'],
+  terms:[['Исследование','Интервью, опросы, наблюдение, анализ данных о поведении.'],['Гипотеза','Предположение, которое проверяют: «если сделать X, пользователям станет проще Y».'],['Прототип','Модель интерфейса, на которой можно проверить идею до разработки.'],['MVP','Минимальный продукт с главной ценностью для первой проверки.'],['Итерация','Один круг «сделали, проверили, улучшили».']]},
+ {h:'Цифровые реальности: веб, мобильные, VR, AR, MR',p:['Интерфейсы живут не только на экране монитора. Веб и мобильные приложения работают на плоском экране. В виртуальной, дополненной и смешанной реальности интерфейс окружает человека и существует в пространстве.'],
+  terms:[['VR','Виртуальная реальность: человек полностью погружён в цифровую среду.'],['AR','Дополненная реальность: цифровые объекты накладываются на реальный мир.'],['MR','Смешанная реальность: цифровые объекты взаимодействуют с физическим пространством.'],['XR','Общее название всех форм: VR, AR и MR.'],['Пространственный интерфейс','Элементы управления расположены в трёхмерном пространстве вокруг человека.']]}
+ ],
+ tasks:[
+ {k:'l1',kind:'ЛПР №1',t:'Анализ примеров интерфейсов: выявление удачных и неудачных решений',goal:'Научиться находить сильные и слабые стороны готовых интерфейсов.',steps:['Выберите три интерфейса: два удачных и один неудачный (сайт или приложение).','Оцените каждый по 10 эвристикам Нильсена по шкале 0–2 и сведите оценки в таблицу.','Сделайте скриншоты и добавьте аннотации: что работает и что мешает.','Для неудачного интерфейса предложите три улучшения и коротко объясните их.'],res:'Презентация или PDF на 5–7 слайдов с таблицей оценок и аннотированными скриншотами.',crit:['Применены все 10 эвристик','Выводы опираются на конкретные элементы экрана','Предложенные улучшения реалистичны']},
+ {k:'l2',kind:'ЛПР №2',t:'Работа с прототипами в Figma: создание базового макета интерфейса',goal:'Освоить основные инструменты Figma и собрать первый экран.',steps:['Создайте файл и фрейм устройства (мобильный 390×844 или рабочий стол 1440).','Включите сетку колонок и шаг 8 px, соберите экран входа: заголовок, два поля, кнопка, ссылка.','Примените Auto Layout к полям и кнопке.','Сделайте компонент «Кнопка» с вариантами Default, Hover и Disabled.','Свяжите два экрана в режиме Prototype и проверьте переход в Present.'],res:'Ссылка на файл Figma с двумя экранами и компонентом кнопки.',crit:['Использована сетка и Auto Layout','Компонент имеет варианты состояний','Прототип запускается без ошибок']},
+ {k:'s1',kind:'СРСП №1',t:'Подбор и анализ источников по современным трендам UI/UX-дизайна',goal:'Научиться находить актуальные источники и отличать тренд от моды.',steps:['Найдите пять источников: статьи, отчёты, блоги дизайн-команд, обзоры за последние два года.','Для каждого напишите краткую аннотацию в 2–3 предложения.','Выделите три тренда и приведите по одному примеру из реального продукта.','Оцените, чем каждый тренд полезен пользователю.'],res:'Таблица источников со ссылками и аннотациями, плюс одностраничный конспект трендов.',crit:['Источники надёжные и свежие','Аннотации своими словами','Примеры подтверждают выводы']}
+ ],
+ quiz:[
+ {q:'Что из перечисленного относится к UX, а не к UI?',o:['Цветовая палитра кнопок','Логика пути пользователя от входа до оплаты','Выбор шрифта','Скругление углов карточек'],a:1,e:'UX описывает опыт и путь пользователя. Палитра, шрифт и скругления относятся к визуальному интерфейсу (UI).'},
+ {q:'Эвристика Нильсена «Видимость состояния системы» означает, что:',o:['Интерфейс использует яркие цвета','Система показывает пользователю, что происходит: загрузку, шаг, результат','Все функции находятся на одном экране','Справка всегда открыта на главной странице'],a:1,e:'Пользователь должен понимать, что сейчас делает система и чем закончилось его действие.'},
+ {q:'Аффорданс — это:',o:['Стиль иконок','Задержка ответа системы','Свойство объекта подсказывать способ его использования','Набор готовых компонентов'],a:2,e:'Например, выпуклая кнопка подсказывает, что её можно нажать.'},
+ {q:'С какого этапа начинается цикл Design Thinking?',o:['Прототип','Эмпатия: исследование пользователей','Тестирование','Разработка'],a:1,e:'Сначала нужно понять людей и их задачи, и только потом придумывать решения.'},
+ {q:'В какой технологии цифровые объекты накладываются на реальное окружение?',o:['VR','CLI','AR','GUI'],a:2,e:'AR (дополненная реальность) добавляет цифровые объекты поверх реального мира. VR полностью заменяет окружение.'}
+ ]},
+
+{id:'m2',c:'var(--c2)',short:'Стратегия',title:'Стратегия дизайна интерфейсов: функциональность, удобство и эстетика',
+ can:['формулировать дизайн-стратегию и принципы проекта','строить структуру интерфейса и wireframe','применять композицию, типографику и цвет'],
+ theory:[
+ {h:'Дизайн-стратегия и баланс трёх опор',fig:'triangle',p:['Дизайн-стратегия связывает цели бизнеса, задачи пользователей и решения в интерфейсе. Она отвечает на вопросы: для кого мы делаем продукт, какую ценность он даёт и как мы поймём, что получилось.','Три опоры хорошего интерфейса: функциональность (что делает продукт), удобство (насколько легко это делать) и эстетика (как продукт выглядит и ощущается). Если одна опора слабая, страдает всё.'],
+  terms:[['Целевая аудитория','Группа людей, для которых создаётся продукт.'],['Ценностное предложение','Короткое описание пользы, которую получает человек.'],['Принципы дизайна','3–5 правил команды, по которым принимаются решения.'],['Метрика успеха','Измеримый показатель: доля успешных задач, время, конверсия.'],['Компромисс (trade-off)','Выбор между равнозначными вариантами с осознанной ценой.']]},
+ {h:'Информационная архитектура и wireframe',fig:'fidelity',p:['Информационная архитектура определяет, как организована и названа информация. Для проверки структуры используют карту сайта, пользовательские потоки и карточную сортировку.','Wireframe — схема экрана без оформления: где находятся блоки и какова их важность. Он позволяет обсуждать структуру, не отвлекаясь на цвета и картинки.'],
+  terms:[['Sitemap','Карта разделов и страниц продукта.'],['Card sorting','Метод, при котором люди группируют карточки с названиями по смыслу.'],['User flow','Путь пользователя по экранам для решения одной задачи.'],['Low-fi / Hi-fi','Низкая и высокая детализация макета: от наброска до почти финального вида.'],['Навигация','Глобальная (меню), локальная (внутри раздела), хлебные крошки.']]},
+ {h:'Композиция и сетка',p:['Композиция — расположение элементов, при котором экран читается с первого взгляда. Основа: выравнивание, близость, контраст и повторение, а также видимая иерархия: самое важное крупнее, ярче или выше.','Сетка колонок и шаг отступов 8 px делают макет аккуратным и ускоряют работу. Пустое пространство не потеря места, оно отделяет группы и даёт глазу отдых.'],
+  terms:[['Гештальт: близость','Близкие элементы воспринимаются как связанные.'],['Гештальт: сходство','Похожие по виду элементы воспринимаются как группа.'],['Визуальная иерархия','Порядок, в котором глаз читает элементы экрана.'],['8-pt grid','Размеры и отступы кратны 8 px: 8, 16, 24, 32.'],['F- и Z-паттерны','Типичные траектории взгляда по текстовой и по простой странице.']]},
+ {h:'Типографика',fig:'type',p:['Типографика отвечает за то, насколько легко читать. Хватает одной-двух гарнитур. Размеры строят по шкале, а контраст между заголовком и основным текстом создаёт иерархию.','Для основного текста на экране подходит размер около 16 px, межстрочный интервал 1,4–1,6 и длина строки 45–75 символов.'],
+  terms:[['Гарнитура','Семейство шрифтов с общим рисунком.'],['Кегль','Размер шрифта.'],['Интерлиньяж','Расстояние между строками.'],['Трекинг','Расстояние между буквами в слове.'],['Модульная шкала','Набор размеров, где каждый шаг больше предыдущего в одно и то же число раз.']]},
+ {h:'Цвет',fig:'color',p:['Цветовые схемы строят по кругу: монохромная, аналогичная (соседние цвета), комплементарная (противоположные) и триадная. Правило 60-30-10 помогает распределить основной, вторичный и акцентный цвета.','Цвет несёт смысл: красный сигнализирует об ошибке, зелёный об успехе. Но смысл нельзя передавать только цветом: добавляйте текст или значок.'],
+  terms:[['HSB / HSL','Описание цвета через оттенок, насыщенность и яркость.'],['Акцентный цвет','Цвет для главных действий. Его мало, поэтому он заметен.'],['Семантические цвета','Цвета состояний: успех, предупреждение, ошибка, информация.'],['Контрастность','Различие по яркости между текстом и фоном.'],['Тёмная тема','Вариант палитры с тёмным фоном, где цвета подбирают заново.']]}
+ ],
+ tasks:[
+ {k:'l3',kind:'ЛПР №3',t:'Разработка структуры интерфейса (wireframe)',goal:'Спроектировать структуру приложения и схемы основных экранов.',steps:['Выберите проект (например, приложение библиотеки колледжа или заказ в столовой) и опишите главную задачу пользователя.','Составьте карту экранов на 5–7 страниц.','Нарисуйте пользовательский поток главной задачи.','Сделайте low-fi wireframe трёх ключевых экранов в Figma.'],res:'Файл Figma: карта экранов, user flow и три wireframe-экрана.',crit:['Структура логична и без лишних экранов','Поток закрывает главную задачу','Иерархия блоков понятна без оформления']},
+ {k:'l4',kind:'ЛПР №4',t:'Использование принципов композиции и типографики в макете',goal:'Превратить wireframe в аккуратный макет с иерархией.',steps:['Возьмите главный экран из ЛПР №3 и настройте сетку колонок и шаг 8 px.','Выберите не более двух гарнитур и задайте шкалу размеров заголовков и текста.','Выстройте иерархию: основное действие должно быть заметнее всего.','Проверьте макет «прищуриванием» (blur-тест): главное должно оставаться видимым.'],res:'Mid-fi или hi-fi макет главного экрана и стили текста в Figma.',crit:['Соблюдены сетка и отступы','Иерархия читается','Текст удобно читать']},
+ {k:'s2',kind:'СРСП №2',t:'Изучение цветовых схем и их применения',goal:'Научиться выбирать и проверять палитру проекта.',steps:['Изучите четыре схемы: монохромную, аналогичную, комплементарную и триадную.','Соберите палитру проекта по правилу 60-30-10.','Проверьте контраст пар «текст и фон» по WCAG и исправьте слабые пары.','Создайте цветовые стили в Figma и коротко обоснуйте выбор.'],res:'Палитра с проверкой контраста и обоснованием на одной странице.',crit:['Правило 60-30-10 соблюдено','Контраст текста проверен','Выбор цветов обоснован задачей продукта']}
+ ],
+ quiz:[
+ {q:'Какие три опоры составляют основу дизайн-стратегии интерфейса?',o:['Скорость, цена, качество','Функциональность, удобство, эстетика','Цвет, форма, шрифт','Анализ, код, тест'],a:1,e:'Продукт должен делать нужное (функциональность), делать это легко (удобство) и приятно выглядеть (эстетика).'},
+ {q:'Wireframe — это:',o:['Готовый макет с финальной графикой','Код страницы','Схема экрана без оформления, показывающая структуру и расположение блоков','Набор иконок'],a:2,e:'Wireframe помогает обсуждать структуру, не отвлекаясь на цвета и картинки.'},
+ {q:'Принцип близости из Гештальта означает, что:',o:['Крупные элементы всегда важнее мелких','Близко расположенные элементы воспринимаются как связанные','Одинаковые цвета нельзя использовать вместе','Текст читается справа налево'],a:1,e:'Группируя элементы расстоянием, мы показываем, что они связаны по смыслу.'},
+ {q:'Какая длина строки считается комфортной для основного текста?',o:['10–20 символов','45–75 символов','120–150 символов','Длина не имеет значения'],a:1,e:'В слишком короткой строке глаз часто прыгает, в слишком длинной теряется начало следующей.'},
+ {q:'Правило 60-30-10 описывает:',o:['Размеры шрифтов','Количество экранов в приложении','Шаг сетки','Соотношение основного, вторичного и акцентного цветов'],a:3,e:'Около 60% занимает основной цвет, 30% вторичный, 10% акцентный.'}
+ ]},
+
+{id:'m3',c:'var(--c3)',short:'UX',title:'Основы проектирования взаимодействия пользователя с системой (UX)',
+ can:['описывать пользователя, сценарии и пути','применять законы взаимодействия при проектировании','проводить юзабилити-тестирование и считать метрики'],
+ theory:[
+ {h:'Пользователь и его задачи',p:['Прежде чем рисовать экраны, нужно понять людей: кто они, чего хотят и что им мешает. Для этого проводят интервью, опросы, наблюдение и изучают данные о поведении.','Результаты исследований оформляют в понятные артефакты: персоны, карты пути, карты эмпатии.'],
+  terms:[['Персона','Описание типичного пользователя: цели, привычки, боли.'],['Job to be Done','Работа, ради которой человек «нанимает» продукт.'],['Empathy map','Карта эмпатии: что человек говорит, думает, делает и чувствует.'],['Сценарий','История использования: ситуация, цель, шаги.'],['Pain point','Место, где пользователю трудно или неприятно.']]},
+ {h:'Сценарии и потоки',fig:'flow',p:['Пользовательский поток показывает путь человека к цели: точку входа, шаги, развилки и результат. Для каждого экрана заранее продумывают состояния: пустое, загрузка, ошибка и успех. Если они не нарисованы, разработчик придумает их сам.'],
+  terms:[['Точка входа','Место, откуда человек начинает: поиск, уведомление, реклама.'],['Развилка','Момент выбора, после которого путь делится.'],['Критический путь','Главный сценарий, без которого продукт теряет смысл.'],['Пустое состояние','Экран без данных: объясняет, что делать дальше.'],['Состояние ошибки','Объясняет, что случилось и как исправить.']]},
+ {h:'Законы взаимодействия',p:['Законы описывают, как люди воспринимают интерфейс. Их знание помогает принимать решения не по вкусу, а по причинам.'],
+  terms:[['Закон Фиттса','Время попадания в цель растёт с расстоянием и уменьшается с размером цели. Важные кнопки делают крупными и близкими.'],['Закон Хика','Чем больше вариантов выбора, тем больше времени уходит на решение. Лишнее убирают или группируют.'],['Закон Миллера','Объём кратковременной памяти ограничен, около 7±2 элементов. Информацию делят на группы.'],['Закон Якоба','Пользователи проводят время на других сайтах и ждут, что ваш работает похоже.'],['Правило пика и конца','Опыт запоминается по самому яркому моменту и по финалу.']]},
+ {h:'Интерактивный прототип и микровзаимодействия',p:['Интерактивный прототип связывает экраны в сценарий: переходы, анимации, состояния элементов. На нём проверяют не картинку, а поведение.','Микровзаимодействие — маленькая реакция на действие: нажатие кнопки, лайк, обновление списка. Оно состоит из триггера, правил, обратной связи и режимов. Ответ интерфейса быстрее 0,1 с воспринимается как мгновенный, до 1 с не прерывает ход мыслей.'],
+  terms:[['Триггер','Событие, которое запускает реакцию: касание, наведение, ввод.'],['Обратная связь','Видимый ответ системы: изменение цвета, анимация, сообщение.'],['Smart Animate','Режим Figma, плавно анимирующий изменения между кадрами.'],['Overlay','Всплывающий слой: меню, модальное окно, подсказка.'],['Hover / Pressed / Focus','Состояния элемента при наведении, нажатии и выборе с клавиатуры.']]},
+ {h:'Юзабилити-тестирование',p:['Юзабилити-тест проверяет интерфейс на реальных людях. Алгоритм: цель, задачи, участники, проведение, фиксация, приоритизация проблем, улучшения. По исследованиям Нильсена, пять участников выявляют большую часть проблем (около 85%) в одном раунде, поэтому тестируют небольшими итерациями.','Во время теста участник думает вслух, а наблюдатель не подсказывает и не оправдывает интерфейс.'],
+  terms:[['Think-aloud','Метод, при котором участник проговаривает мысли и действия.'],['Success rate','Доля участников, выполнивших задачу.'],['Время и ошибки','Сколько заняла задача и сколько неверных действий.'],['SUS','Анкета из 10 утверждений, итог от 0 до 100. Средний результат около 68.'],['A/B-тест','Сравнение двух вариантов экрана на реальной аудитории.']]}
+ ],
+ tasks:[
+ {k:'l5',kind:'ЛПР №5',t:'Создание интерактивных прототипов интерфейса',goal:'Собрать кликабельный прототип пользовательского сценария.',steps:['Соберите не менее шести связанных экранов одного сценария.','Настройте переходы и Smart Animate между кадрами.','Добавьте состояния компонентов: Hover и Pressed.','Сделайте оверлей (модальное окно или меню) и задайте стартовый кадр потока.','Пройдите весь сценарий в режиме Present и исправьте тупики.'],res:'Ссылка на прототип Figma и 30-секундная запись прохождения сценария.',crit:['Сценарий проходится без тупиков','Есть состояния и оверлей','Анимации уместны и не мешают']},
+ {k:'l6',kind:'ЛПР №6',t:'Применение юзабилити-тестирования к прототипу',goal:'Проверить прототип на людях и улучшить его по результатам.',steps:['Подготовьте три задачи и сценарий для участника.','Проведите тест с 3–5 однокурсниками, 10–15 минут на человека, методом think-aloud.','Зафиксируйте успех, время и ошибки, попросите заполнить анкету SUS.','Составьте таблицу проблем с приоритетом: критичная, серьёзная, мелкая.','Внесите правки в прототип и опишите, что изменилось.'],res:'Отчёт: задачи, результаты, таблица проблем, список правок, скриншоты до и после.',crit:['Задачи сформулированы без подсказок','Результаты измерены','Правки следуют из найденных проблем']},
+ {k:'s3',kind:'СРСП №3',t:'Подготовка сравнительного анализа двух интерфейсов: мобильное приложение и сайт',goal:'Научиться сравнивать интерфейсы одного сервиса на разных платформах.',steps:['Выберите сервис, у которого есть и сайт, и мобильное приложение.','Определите критерии: навигация, контент, главные действия, скорость, обратная связь, доступность.','Выполните одну и ту же задачу в обоих интерфейсах и зафиксируйте шаги.','Сведите сравнение в таблицу и сформулируйте выводы.'],res:'Сравнительная таблица и выводы на 1 странице.',crit:['Критерии одинаковы для обеих платформ','Есть конкретные наблюдения','Выводы связаны с особенностями платформ']}
+ ],
+ quiz:[
+ {q:'Что утверждает закон Фиттса?',o:['Чем больше экран, тем быстрее работа','Время попадания в цель растёт с расстоянием до неё и уменьшается с её размером','Человек запоминает ровно три элемента','Цвета не влияют на скорость выбора'],a:1,e:'Поэтому главные кнопки делают достаточно крупными и размещают в удобной зоне.'},
+ {q:'Что утверждает закон Хика?',o:['Время выбора растёт вместе с числом вариантов','Крупные кнопки всегда лучше мелких','Пользователи читают только заголовки','Анимация ускоряет принятие решения'],a:0,e:'Чем больше вариантов, тем дольше человек решает. Отсюда группировка и приоритет главного.'},
+ {q:'Сколько участников в одном раунде юзабилити-теста обычно хватает, чтобы найти большую часть проблем (по Нильсену)?',o:['1','Около 5','50','500'],a:1,e:'Пяти человек достаточно для заметной доли проблем. Дальше эффективнее исправлять и повторять тест.'},
+ {q:'Метод think-aloud — это когда:',o:['Участник молчит, а наблюдатель описывает его действия','Разработчик пишет код во время теста','Участник вслух комментирует действия и мысли во время выполнения задач','Отчёт пишут без участия людей'],a:2,e:'Комментарии вслух показывают, где и почему человек ошибается.'},
+ {q:'SUS — это:',o:['Формат файла Figma','Тип шрифта','Метод сортировки карточек','Анкета из 10 утверждений для оценки удобства (итог 0–100)'],a:3,e:'System Usability Scale даёт быструю числовую оценку удобства системы.'}
+ ]},
+
+{id:'m4',c:'var(--c4)',short:'Платформы',title:'Дизайн для разных платформ: веб, мобильные приложения, VR/AR',
+ can:['проектировать адаптивные интерфейсы для разных экранов','учитывать особенности мобильных платформ и руководства Apple и Google','описывать принципы комфортного VR/AR-взаимодействия'],
+ theory:[
+ {h:'Веб и адаптивный дизайн',fig:'responsive',p:['Адаптивный дизайн подстраивает интерфейс под ширину экрана. Подход mobile-first начинает проектирование с мобильной версии, где место ограничено, и затем расширяет макет для больших экранов.','Основа: гибкая сетка, относительные размеры, гибкие изображения и точки перестроения. Типичные границы: около 360–480, 768, 1024 и 1280 px и выше.'],
+  terms:[['Responsive','Макет плавно меняется по ширине окна.'],['Adaptive','Набор отдельных макетов под заранее заданные ширины.'],['Mobile first','Сначала мобильная версия, затем усложнение для больших экранов.'],['Брейкпоинт','Ширина экрана, при которой макет перестраивается.'],['Auto Layout и Constraints','Инструменты Figma для макетов, которые растягиваются и перестраиваются.']]},
+ {h:'Мобильные приложения',p:['На телефоне человек действует пальцем, а не курсором, в движении и в разных условиях. Поэтому цели касания делают крупными: не меньше 44×44 pt для iOS и 48×48 dp для Android. Главные действия размещают в зоне, до которой дотягивается большой палец.','Для платформ есть официальные руководства: Human Interface Guidelines (Apple) и Material Design (Google). Следование им делает приложение привычным.'],
+  terms:[['HIG','Human Interface Guidelines: правила дизайна для платформ Apple.'],['Material Design','Система дизайна Google для Android и веба.'],['Safe area','Безопасная зона: области, не закрытые вырезом, строкой состояния и жестовой панелью.'],['Tab bar / Bottom sheet','Нижняя навигация и выдвижная нижняя панель.'],['Жесты','Касание, свайп, долгое нажатие, щипок. Они должны быть подсказаны.']]},
+ {h:'Единый стиль на разных платформах',p:['Один продукт живёт на сайте, в iOS, Android и других средах. Пользователь должен узнавать бренд и логику, но платформенные привычки (навигация, жесты, элементы) тоже учитывают.','Для этого команды собирают дизайн-систему: общие компоненты, правила и токены. Токены хранят значения цвета, отступов и шрифтов в одном месте, откуда их берут и дизайнеры, и разработчики.'],
+  terms:[['Дизайн-система','Компоненты, стили, правила и документация продукта.'],['Дизайн-токен','Именованное значение: цвет, размер, отступ, радиус.'],['Компонент','Повторно используемый элемент: кнопка, карточка, поле.'],['Вариант (variant)','Версия компонента: размер, состояние, тип.'],['Согласованность и платформенность','Баланс между единым стилем и привычками платформы.']]},
+ {h:'VR: виртуальная реальность',fig:'vr',p:['В VR человек находится внутри цифровой сцены. Различают 3DoF (отслеживается только поворот головы) и 6DoF (ещё и перемещение в пространстве). Управлять можно контроллерами, руками, взглядом и голосом.','Главная задача дизайнера — комфорт. Укачивание возникает, когда глаза видят движение, а вестибулярный аппарат его не чувствует. Поэтому держат стабильную частоту кадров (обычно 72–120 Гц), избегают резкого движения камеры, используют телепортацию и размещают интерфейс на комфортном расстоянии, как правило 1–2 метра.'],
+  terms:[['3DoF / 6DoF','Три и шесть степеней свободы: повороты или повороты вместе с перемещением.'],['FOV','Поле зрения: насколько широкую картину видит человек.'],['Locomotion','Способы перемещения: телепорт, плавное движение, шаги в реальности.'],['World-locked / Head-locked','Интерфейс закреплён в мире или следует за головой. Второй вариант утомляет.'],['Presence','Ощущение присутствия в виртуальной среде.']]},
+ {h:'AR: дополненная реальность',p:['AR накладывает цифровые объекты на изображение реального мира. Различают маркерную AR (по метке), безмаркерную (по распознанным плоскостям и пространству) и геолокационную.','При проектировании учитывают освещение, свободное место, понятные подсказки сканирования и то, куда смотрит пользователь. Интерфейс привязывают к объекту или оставляют на экране так, чтобы он не закрывал мир.'],
+  terms:[['Якорь (anchor)','Точка в пространстве, к которой привязан цифровой объект.'],['Распознавание плоскостей','Определение пола, стола, стены для размещения объектов.'],['Окклюзия','Перекрытие цифрового объекта реальным предметом.'],['WebXR','Веб-стандарт для VR и AR в браузере.'],['ARKit / ARCore','Наборы инструментов Apple и Google для AR на телефонах.']]}
+ ],
+ tasks:[
+ {k:'l7',kind:'ЛПР №7',t:'Разработка адаптивного макета интерфейса для разных экранов',goal:'Показать, как один интерфейс перестраивается под разные устройства.',steps:['Выберите один экран (главная страница сервиса).','Сделайте три версии: телефон 390, планшет 768, компьютер 1440 px.','Используйте Auto Layout и Constraints, сетку 4 / 8 / 12 колонок.','Проверьте перестроение, меняя ширину фрейма.','Составьте таблицу: что меняется при смене размера и почему.'],res:'Файл Figma с тремя версиями экрана и таблицей изменений.',crit:['Макеты перестраиваются, а не просто уменьшаются','Приоритет контента сохранён','Размеры целей касания достаточны']},
+ {k:'l8',kind:'ЛПР №8',t:'Создание интерактивного VR- или AR-элемента',goal:'Спроектировать элемент интерфейса для пространственной среды.',steps:['Выберите элемент: VR-меню или AR-карточка объекта.','Опишите сценарий и способ взаимодействия: взгляд, контроллер или касание.','Сделайте концепт: вид «из шлема» или схему в Figma, либо демо в доступном инструменте.','Опишите состояния элемента и комфортное расстояние.','Проверьте комфорт: что может утомлять или мешать.'],res:'Концепт-схема или демо, описание взаимодействия на 1 странице.',crit:['Учтены комфорт и расстояние','Способ управления понятен','Состояния описаны']},
+ {k:'s4',kind:'СРСП №4',t:'Изучение и описание инструментов для разработки интерфейсов VR/AR',goal:'Познакомиться с инструментами и научиться выбирать их под задачу.',steps:['Изучите инструменты: Unity, Unreal Engine, Blender, WebXR, ARKit, ARCore и Figma для макетов.','Для каждого опишите назначение, плюсы, ограничения и пример применения.','Составьте сравнительную таблицу.','Выберите инструмент для своего проекта и обоснуйте выбор.'],res:'Таблица сравнения и вывод о выборе инструмента.',crit:['Описания точные','Таблица помогает выбрать','Выбор обоснован задачей']}
+ ],
+ quiz:[
+ {q:'Подход mobile-first означает, что:',o:['Сайт сначала проектируют для мобильного экрана, затем расширяют на большие','Приложение нельзя запускать на компьютере','Все изображения делаются квадратными','Разработка начинается с уведомлений'],a:0,e:'Ограничения мобильного экрана заставляют выделить главное, потом макет дополняют.'},
+ {q:'Минимальный рекомендуемый размер цели касания в руководстве Apple:',o:['10×10 pt','44×44 pt','20×20 pt','100×100 pt'],a:1,e:'Мелкие кнопки трудно нажимать пальцем, и пользователи часто промахиваются.'},
+ {q:'Чем 6DoF отличается от 3DoF?',o:['Больше цветов на экране','Нет контроллеров','Выше частота обновления экрана','Отслеживается не только поворот головы, но и перемещение в пространстве'],a:3,e:'Шесть степеней свободы: три поворота и три перемещения.'},
+ {q:'Основная причина укачивания в VR:',o:['Слишком громкий звук','Конфликт между тем, что видят глаза, и ощущением вестибулярного аппарата','Слишком большой выбор цветов','Слишком маленький шрифт'],a:1,e:'Глаза видят движение, а тело неподвижно. Поэтому избегают резких движений камеры и просадок кадров.'},
+ {q:'Для чего используют дизайн-токены?',o:['Для шифрования данных','Для оплаты подписок','Чтобы хранить значения цветов, отступов и шрифтов в одном месте для разных платформ','Для создания навигации'],a:2,e:'Изменение токена обновляет значение везде, где он используется.'}
+ ]},
+
+{id:'m5',c:'var(--c5)',short:'Тренды',title:'Современные тренды и паттерны в дизайне интерфейсов',
+ can:['оценивать тренды по пользе для задачи','применять типовые паттерны интерфейсов','проверять доступность макета и упрощать интерфейс'],
+ theory:[
+ {h:'Тренды и как их оценивать',p:['Тренды появляются быстро: тёмная тема, bento-сетки, крупная типографика, микроанимации, ИИ-ассистенты в интерфейсах, голосовые и пространственные интерфейсы. Тренд полезен, только если он решает задачу пользователя.','Прежде чем применять тренд, спросите: помогает ли он понять, найти или сделать? Не ухудшает ли читаемость и доступность?'],
+  terms:[['Bento grid','Блочная сетка из карточек разного размера.'],['Glassmorphism','Полупрозрачные «стеклянные» панели. Следите за контрастом текста.'],['Микроанимация','Короткая анимация как обратная связь на действие.'],['Conversational UI','Диалоговый интерфейс: чат или голос.'],['Персонализация','Интерфейс подстраивается под привычки и задачи человека.']]},
+ {h:'Паттерны интерфейсов',p:['Паттерн — проверенное решение типовой задачи. Использование паттернов экономит время и помогает людям: они уже знают, как это работает.'],
+  terms:[['Навигация','Нижняя панель вкладок, боковое меню, хлебные крошки, поиск.'],['Формы','Подписи над полем, маски ввода, понятная проверка ошибок.'],['Обратная связь','Всплывающее уведомление, индикатор прогресса, скелетон при загрузке.'],['Онбординг','Первое знакомство: короткие подсказки по главным действиям.'],['Пустое состояние','Экран без данных с объяснением и призывом к действию.'],['Постепенное раскрытие','Сначала главное, детали показываем по запросу.']]},
+ {h:'Дизайн-система',p:['Дизайн-система — единый источник правил интерфейса: компоненты, стили, токены и документация. Она ускоряет работу и поддерживает согласованность.','Часто применяют подход Atomic Design: атомы (кнопка, поле) складываются в молекулы (поиск), затем в организмы (шапка), шаблоны и страницы.'],
+  terms:[['Атом','Минимальный элемент: кнопка, метка, поле.'],['Молекула','Группа атомов: поле поиска с кнопкой.'],['Организм','Сложный блок: шапка, карточка товара.'],['UI Kit','Набор готовых компонентов для макетов.'],['Документация','Правила использования компонентов и примеры.']]},
+ {h:'Доступность (Accessibility)',fig:'access',p:['Доступный интерфейс удобен людям с разными возможностями: слабым зрением, нарушениями цветовосприятия, ограничениями моторики, при работе одной рукой или в яркий день. Около 8% мужчин плохо различают некоторые цвета.','Стандарт WCAG строится на четырёх принципах (POUR): воспринимаемость, управляемость, понятность и надёжность. Уровни соответствия A, AA и AAA. Для практики достаточно запомнить основное: контраст, не только цвет, клавиатура, видимый фокус, подписи и крупные цели.'],
+  terms:[['WCAG','Международные рекомендации по доступности веб-контента.'],['Контраст','Не менее 4,5:1 для обычного текста и 3:1 для крупного текста и значков (уровень AA).'],['Альтернативный текст','Описание изображения для программ чтения с экрана.'],['Фокус','Видимое выделение элемента при управлении клавиатурой.'],['Не только цвет','Состояние показывают также текстом, значком или формой.'],['Reduced motion','Настройка системы: уменьшить анимацию. Её нужно уважать.']]},
+ {h:'Простой интерфейс для реальной задачи',p:['Простота — результат решений, а не отсутствие функций. На экране должна быть одна главная цель, остальное уходит на второй план. Разумные значения по умолчанию, короткие понятные тексты и крупные элементы снижают когнитивную нагрузку.','Хороший приём: описать задачу пользователя одним предложением и убрать всё, что ей не помогает.'],
+  terms:[['Когнитивная нагрузка','Умственное усилие, нужное человеку для понимания интерфейса.'],['Значения по умолчанию','Заранее подобранные варианты, которые подходят большинству.'],['UX-writing','Тексты интерфейса: кнопки, подсказки, ошибки.'],['Главное действие','Одно действие, ради которого создан экран.'],['Предотвращение ошибок','Ограничения и подсказки, не дающие ошибиться.']]}
+ ],
+ tasks:[
+ {k:'l9',kind:'ЛПР №9',t:'Разработка макета главной страницы цифрового продукта',goal:'Собрать главную страницу продукта с понятной структурой и главным действием.',steps:['Выберите продукт (магазин, сервис записи, учебная платформа) и определите главное действие.','Спроектируйте блоки: шапка, главный экран с призывом, ценность, доказательства, подвал.','Сделайте версии для компьютера и телефона.','Соберите макет из компонентов и стилей.'],res:'Файл Figma с двумя версиями главной страницы.',crit:['Главное действие заметно','Структура логична','Макет собран из компонентов']},
+ {k:'l10',kind:'ЛПР №10',t:'Внедрение принципов доступности (Accessibility) в дизайн',goal:'Проверить и улучшить доступность готового макета.',steps:['Возьмите макет из ЛПР №9.','Проверьте контраст всех пар «текст и фон» (не менее 4,5:1).','Проверьте размеры целей касания и видимые состояния фокуса.','Убедитесь, что смысл не передаётся только цветом, и добавьте тексты для изображений.','Составьте чек-лист и внесите исправления.'],res:'Чек-лист доступности и исправленный макет.',crit:['Контраст проверен и исправлен','Есть состояния фокуса','Чек-лист заполнен']},
+ {k:'s5',kind:'СРСП №5',t:'Проектирование упрощённого интерфейса для реальной задачи',goal:'Применить принцип простоты к настоящей жизненной задаче.',steps:['Выберите задачу: запись к врачу, заказ в столовой, расписание или другую.','Опишите пользователя и его цель одним предложением.','Сделайте макет из 2–3 экранов с минимумом элементов.','Обоснуйте, что убрали и почему.'],res:'Макет 2–3 экранов и краткое обоснование.',crit:['Главная цель очевидна','Нет лишних элементов','Тексты ясные']}
+ ],
+ quiz:[
+ {q:'Какой минимальный контраст WCAG уровня AA нужен для обычного текста?',o:['1,5:1','3:1','4,5:1','21:1'],a:2,e:'Для крупного текста и значков достаточно 3:1.'},
+ {q:'Принцип «постепенное раскрытие» означает:',o:['Показывать всё сразу','Сначала главное, детали по запросу','Скрывать ошибки пользователя','Отключать навигацию'],a:1,e:'Так интерфейс не перегружает человека и сохраняет доступ к деталям.'},
+ {q:'Что входит в дизайн-систему?',o:['Компоненты, стили, токены и документация','Только логотип','Сайт заказчика','Только цвета'],a:0,e:'Дизайн-система объединяет правила и готовые элементы для всей команды.'},
+ {q:'Что нарушает принцип доступности?',o:['Видимый фокус','Альтернативный текст для изображений','Показ ошибки только красным цветом без текста и значка','Крупные цели касания'],a:2,e:'Люди с нарушением цветовосприятия могут не заметить ошибку. Добавьте текст или значок.'},
+ {q:'Для чего нужен скелетон (skeleton screen)?',o:['Чтобы показать форму будущего контента, пока он загружается','Для шифрования данных','Для печати страницы','Для рекламы'],a:0,e:'Скелетон показывает, что система работает, и снижает ощущение ожидания.'}
+ ]},
+
+{id:'m6',c:'var(--c6)',short:'Защита',title:'Презентация и защита дизайн-решений. Навыки аргументации',
+ can:['строить кейс и презентовать дизайн-решение','аргументировать выбор данными и принципами','готовить макеты к передаче и описывать дизайн-стратегию'],
+ theory:[
+ {h:'Структура кейса',fig:'story',p:['Кейс рассказывает не только про красивый результат, но и про путь. Слушатель должен понять, для кого сделан продукт, какую проблему вы решали, что пробовали и что получилось.','Короткий вариант структуры: контекст, проблема, решение, доказательства, результат. На каждый шаг достаточно одного-двух экранов.'],
+  terms:[['Case study','Рассказ о проекте: задача, процесс и итог.'],['Storytelling','Подача материала как истории с логикой.'],['Before / After','Сравнение «до» и «после» с объяснением изменений.'],['Демо','Показ работающего прототипа на живом сценарии.'],['Артефакты процесса','Исследования, схемы, wireframe: подтверждение пути.']]},
+ {h:'Аргументация',p:['Аргументируя решение, опирайтесь на пользователей, данные и принципы, а не на вкус. Хорошая формула: «Мы сделали X, потому что пользователи Y; это подтверждают данные Z».','Слабые доводы: «мне нравится», «так красивее», «так делают все». Сильные: результаты теста, эвристики, исследования, метрики.'],
+  terms:[['Тезис','Что вы утверждаете: «кнопка должна быть заметнее».'],['Аргумент','Почему это так: «пользователи пропускали её в тесте».'],['Доказательство','Данные, наблюдения, принцип: результаты теста, закон Фиттса.'],['Компромисс','Что вы потеряли ради выигрыша и почему это оправдано.'],['Контраргумент','Возражение, на которое нужно быть готовым ответить.']]},
+ {h:'Дизайн-критика и обратная связь',p:['Критика направлена на решение и цель, а не на автора. Полезный формат: «Я вижу…, я думаю…, предлагаю…». Принимая обратную связь, слушайте, записывайте и уточняйте. Не оправдывайтесь сразу.','Затем решите, что принять, что отложить и что обсудить.'],
+  terms:[['Design critique','Структурированное обсуждение макета.'],['Стейкхолдер','Человек, заинтересованный в результате: заказчик, менеджер, разработчик.'],['Ревью','Проверка работы коллегами.'],['Приоритизация','Выбор правок по важности и сложности.'],['Вопросы вместо оценок','«Какую задачу решает этот экран?» помогает лучше, чем «не нравится».']]},
+ {h:'Передача макетов разработчикам (handoff)',p:['Макет нужно не только нарисовать, но и подготовить к разработке: понятные названия слоёв, компоненты вместо копий, описанные состояния, отступы, адаптивные версии и выгруженные ресурсы. В Figma для этого есть режим Dev Mode.'],
+  terms:[['Dev Mode','Режим Figma для разработчиков: размеры, стили, код-подсказки.'],['Спецификация','Описание поведения и размеров, не очевидных из картинки.'],['Именование слоёв','Понятные названия вместо «Rectangle 15».'],['Экспорт ресурсов','Иконки и изображения в нужных форматах.'],['Состояния и крайние случаи','Пустой экран, ошибка, длинный текст, отсутствие сети.']]},
+ {h:'Дизайн-стратегия: документ',p:['Документ дизайн-стратегии коротко фиксирует видение, аудиторию, цели, принципы и план. Он помогает команде принимать согласованные решения.','Для целей используют метрики. Популярная рамка HEART включает Happiness (удовлетворённость), Engagement (вовлечённость), Adoption (освоение), Retention (удержание) и Task success (успешность задач).'],
+  terms:[['Видение','Образ желаемого результата и ценности продукта.'],['HEART','Рамка UX-метрик из пяти направлений.'],['KPI','Ключевой показатель эффективности.'],['Roadmap','План развития продукта по этапам.'],['Риски','Что может помешать, и как это смягчить.']]}
+ ],
+ tasks:[
+ {k:'l11',kind:'ЛПР №11',t:'Подготовка презентационного макета интерфейса в Figma',goal:'Оформить проект для показа и защиты.',steps:['Подготовьте файл Figma: обложка и страницы Research, Wireframes, UI Kit, Prototype.','Соберите презентацию из 8–10 слайдов: контекст, проблема, решение, макеты, поток, результаты.','Покажите ключевые экраны в контексте устройства.','Подготовьте демо прототипа в режиме Present.','Отрепетируйте выступление на 5 минут.'],res:'Файл Figma с презентацией и ссылкой на демо-прототип.',crit:['Файл аккуратный и понятный','Есть история проекта','Выступление укладывается во время']},
+ {k:'l12',kind:'ЛПР №12',t:'Разработка дизайн-стратегии',goal:'Описать стратегию проекта в виде короткого документа.',steps:['Опишите видение и аудиторию проекта.','Сформулируйте цели и метрики (можно по HEART).','Определите 3–5 принципов дизайна.','Опишите функциональность, эстетику (палитра и шрифты) и платформы.','Укажите риски и связь стратегии с макетами.'],res:'Документ на 1–2 страницы.',crit:['Цели измеримы','Принципы конкретны','Стратегия связана с макетом']},
+ {k:'s6',kind:'СРСП №6',t:'Создание и описание собственного интерфейсного макета',goal:'Самостоятельно пройти путь от идеи до прототипа и защитить его.',steps:['Выберите задачу и опишите пользователя.','Сделайте hi-fi прототип на 5–8 экранов.','Проведите мини-тест и внесите правки.','Подготовьте описание: задача, пользователь, решения, обоснования, результаты теста.','Подготовьте защиту на 5 минут.'],res:'Прототип, описание проекта и выступление.',crit:['Решения обоснованы','Прототип проходит основной сценарий','Защита ясная и по структуре']}
+ ],
+ quiz:[
+ {q:'Какая формулировка лучше всего подходит для защиты решения?',o:['Мне так нравится','Так делают все','Мы выбрали X, потому что пользователи Y; это подтверждают результаты теста Z','Это модно'],a:2,e:'Сильная аргументация опирается на пользователей и данные.'},
+ {q:'Что включают в кейс, кроме финального макета?',o:['Только цвета','Контекст, проблему, исследование, процесс и результат','Только исходный код','Ничего, макет говорит сам за себя'],a:1,e:'Показывая путь, вы доказываете, что решение не случайно.'},
+ {q:'Хорошая дизайн-критика направлена на:',o:['Решение в контексте целей пользователя, а не на личность автора','Личность автора','Личный вкус критикующего','Скорость выполнения'],a:0,e:'Критика помогает улучшать продукт, а не оценивать человека.'},
+ {q:'HEART — это:',o:['Формат файла Figma','Рамка UX-метрик: Happiness, Engagement, Adoption, Retention, Task success','Метод карточной сортировки','Тип сетки макета'],a:1,e:'HEART помогает выбрать метрики опыта по пяти направлениям.'},
+ {q:'Для чего нужен handoff?',o:['Для сжатия изображений','Для проведения интервью','Для печати макетов','Чтобы передать макеты и описания разработчикам в понятном виде'],a:3,e:'Хороший handoff уменьшает вопросы и ошибки при реализации.'}
+ ]}
+];
+const PASS=70, FINAL_N=2;
+const TASKS=[];MODS.forEach(m=>m.tasks.forEach(t=>TASKS.push(t)));
+
+/* ---------- Утилиты ---------- */
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+const fmtDate=iso=>{if(!iso)return '';const a=iso.split('-').map(Number);return new Date(a[0],a[1]-1,a[2]).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});};
+const hash=s=>{let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){const ch=s.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);};
+const codeHash=(mid,code)=>hash('uxc|'+mid+'|'+String(code).trim().toUpperCase());
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
+const LS={get(k){try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}};
+const genCode=()=>{const al='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let s='';const r=new Uint32Array(5);try{crypto.getRandomValues(r);}catch(e){for(let i=0;i<5;i++)r[i]=Math.floor(Math.random()*4294967295);}for(let i=0;i<5;i++)s+=al[r[i]%al.length];return s;};
+const mcol=m=>'style="--mc:'+m.c+'"';
+
+/* ---------- Состояние ---------- */
+const S={
+  view:'home',mid:null,tab:'theory',quiz:null,
+  p:LS.get('uxc.p1')||{student:null,mods:{},final:null,tasks:{}},
+  sched:{modules:{}},
+  teacher:false,asStudent:false,standalone:false,code:LS.get('uxc.code')||'',loginErr:'',grades:{},syncTimer:null,
+  J:LS.get('uxc.j1')||{students:{},codes:{}},
+  draft:null,sel:null,pubFallback:'',codeErr:{},resetAsk:false,toast:''
+};
+const CAP={art:null,dl:null};
+const API=()=>S.standalone?(S.sched.api||''):'';
+async function api(action,data){
+  const r=await fetch(S.sched.api,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:action},data||{}))});
+  const j=await r.json();
+  if(!j.ok)throw j;
+  return j;
+}
+function saveP(){S.p.ts=Date.now();LS.set('uxc.p1',S.p);scheduleSync();}
+function scheduleSync(){if(!API()||!S.code)return;clearTimeout(S.syncTimer);S.syncTimer=setTimeout(syncNow,800);}
+async function syncNow(){
+  try{await api('save',{code:S.code,progress:S.p});}
+  catch(e){toast('Нет связи с журналом. Прогресс сохранён на устройстве и отправится позже.');}
+}
+function applyLogin(j,keepNewer){
+  const sp=j.progress||null,lp=S.p;
+  let use=sp;
+  if(keepNewer&&lp&&lp.student&&(lp.ts||0)>((sp&&sp.ts)||0))use=lp;
+  S.p=Object.assign({mods:{},final:null,tasks:{}},use||{});
+  S.p.student={name:j.name,group:j.group};
+  S.grades=j.grades||{};
+  const m={};
+  Object.keys(j.schedule||{}).forEach(id=>{const x=j.schedule[id],e={};if(x.date)e.date=x.date;if(x.req)e.hash='srv';if(e.date||e.hash)m[id]=e;});
+  S.sched=Object.assign({},S.sched,{modules:m});
+  LS.set('uxc.p1',S.p);
+  if(keepNewer&&use===lp)scheduleSync();
+}
+const saveJ=()=>LS.set('uxc.j1',S.J);
+const isT=()=>S.teacher&&!S.asStudent;
+const modIdx=id=>MODS.findIndex(m=>m.id===id);
+const passed=id=>!!(S.p.mods[id]&&S.p.mods[id].passedAt);
+const passedCount=()=>MODS.filter(m=>passed(m.id)).length;
+const allPassed=()=>passedCount()===MODS.length;
+const finalPassed=()=>!!(S.p.final&&S.p.final.passedAt);
+
+function gate(i){
+  const m=MODS[i];
+  if(isT())return {open:true};
+  if(!S.p.student)return {open:false,reason:'reg',text:API()?'Сначала войдите по личному коду':'Сначала введите ФИО и группу'};
+  if(i>0&&!passed(MODS[i-1].id))return {open:false,reason:'prev',text:'Сначала сдайте тест модуля '+i};
+  const sc=S.sched.modules&&S.sched.modules[m.id];
+  if(sc&&sc.date&&todayISO()<sc.date)return {open:false,reason:'date',text:'Откроется '+fmtDate(sc.date)};
+  if(sc&&sc.hash&&(S.p.mods[m.id]||{}).unlocked!==sc.hash)return {open:false,reason:'code',text:'Нужен код урока'};
+  return {open:true};
+}
+function toast(t){S.toast=t;const h=document.getElementById('toast-host');if(h){h.innerHTML='<div class="toast" role="status">'+esc(t)+'</div>';}setTimeout(()=>{if(S.toast===t){S.toast='';const h2=document.getElementById('toast-host');if(h2)h2.innerHTML='';}},3200);}
+
+/* ---------- Отрисовка ---------- */
+function renderTop(){
+  const nav=[];
+  nav.push('<button class="btn sm'+(S.view==='home'?' on':'')+'" data-act="go" data-view="home">Курс</button>');
+  if(S.teacher){
+    nav.push('<button class="btn sm'+(S.view==='teacher'?' on':'')+'" data-act="go" data-view="teacher">Кабинет преподавателя</button>');
+    nav.push('<button class="btn sm" data-act="asstudent">'+(S.asStudent?'Вернуться к режиму преподавателя':'Смотреть как студент')+'</button>');
+  }
+  if(S.standalone){
+    if(S.teacher)nav.push('<button class="btn sm" data-act="tlogout">Выйти из кабинета</button>');
+    else nav.push('<button class="btn sm'+(S.view==='login'?' on':'')+'" data-act="tlogin">Вход для преподавателя</button>');
+  }
+  if(S.p.student)nav.push('<span class="chip">'+esc(S.p.student.name)+' · '+esc(S.p.student.group)+'</span>');
+  document.getElementById('top').innerHTML='<button class="brand" data-act="go" data-view="home" aria-label="На главную"><i>'+MODS.map(m=>'<b style="background:'+m.c+'"></b>').join('')+'</i><span>UI/UX · ПМ 1</span></button><div class="nav">'+nav.join('')+'</div>';
+}
+function statusChip(i){
+  const m=MODS[i],r=S.p.mods[m.id];
+  if(passed(m.id))return '<span class="st ok">Пройден · '+r.best+'%</span>';
+  const g=gate(i);
+  if(g.open)return '<span class="st">'+(r&&r.attempts?'Лучший результат '+r.best+'%':'Открыт')+'</span>';
+  return '<span class="st lock">'+esc(g.text)+'</span>';
+}
+function modCard(i){
+  const m=MODS[i],g=gate(i);
+  const labs=m.tasks.map(t=>t.kind.replace('ЛПР №','ЛПР ').replace('СРСП №','СРСП ')).join(' · ');
+  let foot='';
+  if(g.open)foot='<button class="btn pri sm" data-act="openmod" data-mid="'+m.id+'">'+(passed(m.id)?'Повторить':'Открыть модуль')+'</button>';
+  else if(g.reason==='code')foot='<div class="codebox"><input id="code-'+m.id+'" placeholder="Код урока" maxlength="12" autocomplete="off" aria-label="Код урока"><button class="btn sm pri" data-act="entercode" data-mid="'+m.id+'">Ввести</button></div>';
+  return '<article class="card mod'+(g.open?'':' locked')+'" '+mcol(m)+'><div class="tag mono"><b></b>Модуль '+pad(i+1)+'</div><div class="num">'+pad(i+1)+'</div><h3>'+esc(m.title)+'</h3><div class="meta">'+esc(labs)+' · тест</div><div class="foot">'+statusChip(i)+foot+'</div>'+(S.codeErr[m.id]?'<div class="err">'+esc(S.codeErr[m.id])+'</div>':'')+'</article>';
+}
+function viewHome(){
+  const st=S.p.student;
+  let h='<section class="hero"><div><div class="mono">Дисциплина ПМ 1 · РО 1.2 · 2 курс</div><h1>Дизайн интерфейсов: от идеи до макета</h1><p class="lead">Определять стратегию дизайна и разрабатывать макеты пользовательского интерфейса относительно функциональности ПО. Шесть тем, практика в Figma, тесты и сертификат в конце курса.</p>';
+  h+='</div><figure class="fig" style="margin:0">'+FIG.hero+'</figure></section>';
+  if(!st&&!isT()&&API()){
+    h+='<section class="card" style="max-width:640px"><h2 style="font-size:20px;margin-bottom:12px">Вход по личному коду</h2><p style="color:var(--muted)">Код выдаёт преподаватель. По нему вы продолжите курс с любого устройства с того места, где остановились.</p><div class="field"><label for="login-code">Личный код</label><input class="inp" id="login-code" autocomplete="off" placeholder="Например, K7M2QX" style="text-transform:uppercase;font-family:var(--f-mono);letter-spacing:.1em"></div><div class="err" id="login-err" role="alert">'+esc(S.loginErr)+'</div><button class="btn pri" data-act="srvlogin">Войти</button></section>';
+  } else if(!st&&!isT()){
+    h+='<section class="card" style="max-width:640px"><h2 style="font-size:20px;margin-bottom:12px">Начните с имени</h2><p style="color:var(--muted)">ФИО будет указано в сертификате. Прогресс сохраняется на этом устройстве.</p><div class="two"><div class="field"><label for="reg-name">ФИО</label><input class="inp" id="reg-name" autocomplete="name" placeholder="Иванов Иван"></div><div class="field"><label for="reg-group">Группа</label><input class="inp" id="reg-group" placeholder="Например, ИС-21"></div></div><div id="reg-err" class="err"></div><button class="btn pri" data-act="register">Начать курс</button></section>';
+  } else {
+    const n=passedCount(),pct=Math.round(n/MODS.length*100);
+    let next=MODS.findIndex(m=>!passed(m.id));
+    h+='<section class="card"><div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="min-width:0"><div class="mono">Ваш прогресс</div><div style="font:700 22px var(--f-display)">'+n+' из '+MODS.length+' модулей</div></div>'+(next>=0&&gate(next).open?'<button class="btn pri" data-act="openmod" data-mid="'+MODS[next].id+'">Продолжить: модуль '+(next+1)+'</button>':'')+'</div><div class="prog" style="margin-top:14px" role="progressbar" aria-valuenow="'+pct+'" aria-valuemin="0" aria-valuemax="100"><span style="width:'+pct+'%"></span></div></section>';
+  }
+  h+='<section class="sect"><h2>Модули курса</h2><p class="sub">Каждый модуль состоит из теории, практики и теста. Следующий модуль открывается после сдачи теста.</p><div class="grid">'+MODS.map((m,i)=>modCard(i)).join('')+'</div></section>';
+  const fOpen=isT()||allPassed();
+  h+='<section class="sect"><div class="grid"><article class="card"><div class="mono">Финал</div><h3 style="font-size:20px;margin:6px 0 8px">Итоговый тест</h3><p style="color:var(--muted)">'+(MODS.length*FINAL_N)+' вопросов по всему курсу, порог '+PASS+'%. Открывается после всех модулей.</p>'+(finalPassed()?'<span class="st ok">Сдан · '+S.p.final.best+'%</span> ':'')+(fOpen?'<button class="btn pri sm" data-act="openfinal">'+(finalPassed()?'Пересдать':'Начать итоговый тест')+'</button>':'<span class="st lock">Сначала пройдите все модули</span>')+'</article>';
+  const cOpen=isT()||finalPassed();
+  h+='<article class="card"><div class="mono">Награда</div><h3 style="font-size:20px;margin:6px 0 8px">Сертификат</h3><p style="color:var(--muted)">С вашим именем и датой прохождения курса. Можно скачать изображением.</p>'+(cOpen?'<button class="btn pri sm" data-act="opencert">Открыть сертификат</button>':'<span class="st lock">Откроется после итогового теста</span>')+'</article></div></section>';
+  if(st&&API()){
+    const gk=TASKS.filter(t=>S.grades&&S.grades[t.k]!=null&&S.grades[t.k]!=='');
+    h+='<section class="sect"><div class="card"><h2 style="font-size:20px;margin-bottom:6px">Мой прогресс</h2><p style="color:var(--muted)">Вы вошли как '+esc(st.name)+'. Прогресс сохраняется в журнале автоматически, завтра можно продолжить с любого устройства по личному коду.</p>'+(gk.length?'<div class="mono" style="margin:12px 0 6px">Оценки за практику</div><div class="terms">'+gk.map(t=>'<div class="term"><b>'+esc(t.kind)+'</b><span>'+esc(S.grades[t.k])+' баллов</span></div>').join('')+'</div>':'')+'<div style="margin-top:12px"><button class="btn sm" data-act="srvlogout">Выйти</button></div></div></section>';
+  } else if(st){
+    const code=makeResult();
+    h+='<section class="sect"><div class="card"><h2 style="font-size:20px;margin-bottom:6px">Мои результаты</h2><p style="color:var(--muted)">Скопируйте код результата и отправьте преподавателю, чтобы он увидел ваши баллы. Код можно отправлять после каждого модуля.</p><textarea class="inp" id="rescode" readonly rows="3" aria-label="Код результата">'+esc(code)+'</textarea><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn sm pri" data-act="copyres">Скопировать код</button>'+(S.resetAsk?'<button class="btn sm" data-act="resetyes" style="border-color:var(--bad);color:var(--bad)">Да, стереть прогресс на этом устройстве</button><button class="btn sm" data-act="resetno">Отмена</button>':'<button class="btn sm" data-act="resetask">Сбросить прогресс</button>')+'</div></div></section>';
+  }
+  h+='<footer>Профессиональный модуль ПМ 1, результат обучения РО 1.2. '+(API()?'Тесты и отметки о выполнении сохраняются в журнале курса.':'Тесты и отметки о выполнении хранятся на вашем устройстве.')+' Оценки за практику выставляет преподаватель.</footer>';
+  return h;
+}
+function figHTML(k){return k?'<figure class="fig">'+FIG[k]+'</figure>':'';}
+function viewModule(){
+  const i=modIdx(S.mid),m=MODS[i];
+  let h='<button class="back" data-act="go" data-view="home">← Все модули</button><div class="mhead" '+mcol(m)+'><div class="band"><span class="mono">Модуль '+pad(i+1)+' из '+pad(MODS.length)+'</span></div><div class="body"><h1>'+esc(m.title)+'</h1><div class="mono" style="margin-bottom:6px">После модуля вы сможете</div><ul class="can">'+m.can.map(c=>'<li>'+esc(c)+'</li>').join('')+'</ul></div></div>';
+  h+='<div class="tabs" role="tablist">'+[['theory','Теория'],['practice','Практика'],['test','Тест']].map(t=>'<button class="btn'+(S.tab===t[0]?' on':'')+'" role="tab" aria-selected="'+(S.tab===t[0])+'" data-act="tab" data-tab="'+t[0]+'">'+t[1]+'</button>').join('')+'</div>';
+  if(S.tab==='theory'){
+    h+='<div class="panel">'+m.theory.map(s=>'<section class="card th"><h3>'+esc(s.h)+'</h3>'+s.p.map(x=>'<p>'+esc(x)+'</p>').join('')+figHTML(s.fig)+'<div class="terms">'+s.terms.map(t=>'<div class="term"><b>'+esc(t[0])+'</b><span>'+esc(t[1])+'</span></div>').join('')+'</div></section>').join('')+'<div><button class="btn pri" data-act="tab" data-tab="practice">К практике →</button></div></div>';
+  } else if(S.tab==='practice'){
+    h+='<div class="panel">'+m.tasks.map(t=>{const done=!!S.p.tasks[t.k];return '<section class="card task" '+mcol(m)+'><span class="kind">'+esc(t.kind)+'</span><h3>'+esc(t.t)+'</h3><p><b>Цель:</b> '+esc(t.goal)+'</p><ol>'+t.steps.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol><div class="res"><b>Результат:</b> '+esc(t.res)+'</div><div class="mono">Критерии оценки</div><ul>'+t.crit.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><div class="row"><button class="btn sm'+(done?' on':'')+'" data-act="task" data-k="'+t.k+'" aria-pressed="'+done+'">'+(done?'✓ Отмечено как выполненное':'Отметить как выполненное')+'</button><span class="meta" style="font-size:13px;color:var(--muted)">Оценку выставляет преподаватель</span></div></section>';}).join('')+'<div><button class="btn pri" data-act="tab" data-tab="test">К тесту →</button></div></div>';
+  } else {
+    h+=viewTestTab(m,i);
+  }
+  return h;
+}
+function viewTestTab(m,i){
+  if(S.quiz&&S.quiz.kind===m.id)return viewQuiz();
+  const r=S.p.mods[m.id]||{};
+  let h='<section class="card"><h3 style="font-size:20px;margin-bottom:10px">Тест по модулю</h3><p>'+m.quiz.length+' вопросов, порог '+PASS+'% (минимум '+Math.ceil(m.quiz.length*PASS/100)+' верных ответов). Попыток сколько угодно, вопросы и варианты каждый раз перемешиваются.</p>';
+  if(r.attempts)h+='<p>Лучший результат: <b>'+r.best+'%</b>, попыток: '+r.attempts+(r.passedAt?', сдан '+fmtDate(r.passedAt):'')+'.</p>';
+  h+='<button class="btn pri" data-act="startquiz" data-kind="'+m.id+'">'+(r.attempts?'Пройти ещё раз':'Начать тест')+'</button></section>';
+  if(r.passedAt){const ni=i+1;h+=ni<MODS.length?'<div style="margin-top:14px">'+(gate(ni).open?'<button class="btn pri" data-act="openmod" data-mid="'+MODS[ni].id+'">Следующий модуль →</button>':'<span class="st lock">Следующий модуль: '+esc(gate(ni).text)+'</span>')+'</div>':'<div style="margin-top:14px"><button class="btn pri" data-act="go" data-view="home">К итоговому тесту</button></div>';}
+  return h;
+}
+function startQuiz(kind){
+  let pool;
+  if(kind==='final'){pool=[];MODS.forEach(m=>{shuffle(m.quiz).slice(0,FINAL_N).forEach(q=>pool.push(q));});pool=shuffle(pool);}
+  else pool=shuffle(MODS[modIdx(kind)].quiz);
+  S.quiz={kind:kind,i:0,sel:null,correct:0,log:[],done:false,qs:pool.map(q=>{const idx=shuffle(q.o.map((_,k)=>k));return {q:q.q,o:idx.map(k=>q.o[k]),a:idx.indexOf(q.a),e:q.e};})};
+}
+function viewQuiz(){
+  const Q=S.quiz;
+  if(Q.done)return viewQuizDone();
+  const q=Q.qs[Q.i],answered=Q.sel!==null;
+  let h='<section class="card q"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><span class="mono">Вопрос '+(Q.i+1)+' из '+Q.qs.length+'</span><span class="mono">Верно: '+Q.correct+'</span></div><div class="prog" style="margin-top:8px"><span style="width:'+Math.round(Q.i/Q.qs.length*100)+'%"></span></div><h3>'+esc(q.q)+'</h3>';
+  h+=q.o.map((t,k)=>{let cls='opt';if(answered){if(k===q.a)cls+=' right';else if(k===Q.sel)cls+=' wrong';}return '<button class="'+cls+'" data-act="pick" data-i="'+k+'"'+(answered?' disabled':'')+'>'+esc(t)+'</button>';}).join('');
+  if(answered){h+='<div class="note"><b>'+(Q.sel===q.a?'Верно. ':'Не совсем. ')+'</b>'+esc(q.e)+'</div><button class="btn pri" data-act="next">'+(Q.i+1<Q.qs.length?'Дальше':'Посмотреть результат')+'</button>';}
+  return h+'</section>';
+}
+function finishQuiz(){
+  const Q=S.quiz,pct=Math.round(Q.correct/Q.qs.length*100),ok=pct>=PASS;
+  Q.pct=pct;Q.ok=ok;Q.done=true;
+  const rec=Q.kind==='final'?(S.p.final||(S.p.final={best:0,attempts:0})):(S.p.mods[Q.kind]||(S.p.mods[Q.kind]={best:0,attempts:0}));
+  rec.attempts=(rec.attempts||0)+1;rec.best=Math.max(rec.best||0,pct);rec.last=pct;
+  if(ok&&!rec.passedAt)rec.passedAt=todayISO();
+  saveP();
+}
+function viewQuizDone(){
+  const Q=S.quiz;
+  let h='<section class="card"><div class="mono">Результат</div><div class="score" style="margin:8px 0">'+Q.pct+'%</div><p>'+(Q.ok?'<b style="color:var(--ok)">Тест сдан.</b> Верных ответов: '+Q.correct+' из '+Q.qs.length+'.':'<b style="color:var(--bad)">Пока не сдан.</b> Верных ответов: '+Q.correct+' из '+Q.qs.length+', нужно не менее '+PASS+'%. Перечитайте теорию и попробуйте снова.')+'</p><div style="display:flex;gap:8px;flex-wrap:wrap">';
+  if(Q.kind==='final'){h+=Q.ok?'<button class="btn pri" data-act="opencert">Получить сертификат</button>':'<button class="btn pri" data-act="startquiz" data-kind="final">Пересдать</button>';h+='<button class="btn" data-act="go" data-view="home">К курсу</button>';}
+  else{const i=modIdx(Q.kind),ni=i+1;if(Q.ok&&ni<MODS.length&&gate(ni).open)h+='<button class="btn pri" data-act="openmod" data-mid="'+MODS[ni].id+'">Следующий модуль →</button>';else if(Q.ok&&ni>=MODS.length)h+='<button class="btn pri" data-act="go" data-view="home">К итоговому тесту</button>';if(!Q.ok)h+='<button class="btn pri" data-act="startquiz" data-kind="'+Q.kind+'">Пройти ещё раз</button><button class="btn" data-act="tab" data-tab="theory">Повторить теорию</button>';else h+='<button class="btn" data-act="go" data-view="home">К курсу</button>';
+    if(Q.ok&&ni<MODS.length&&!gate(ni).open)h+='<span class="st lock" style="align-self:center">Следующий модуль: '+esc(gate(ni).text)+'</span>';}
+  h+='</div></section><section class="card"><h3 style="font-size:18px;margin-bottom:6px">Разбор ответов</h3>'+Q.log.map((l,n)=>'<div class="review"><b>'+(n+1)+'. '+esc(l.q)+'</b><br>'+(l.ok?'<span class="ok">Верно:</span> ':'<span class="bad">Ваш ответ:</span> '+esc(l.chosen)+'. <span class="ok">Верный:</span> ')+esc(l.right)+'<br><span style="color:var(--muted)">'+esc(l.e)+'</span></div>').join('')+'</section>';
+  return h;
+}
+function viewFinal(){
+  let h='<button class="back" data-act="go" data-view="home">← К курсу</button><div class="mhead" style="--mc:var(--accent)"><div class="band" style="color:var(--accent-ink)"><span class="mono" style="color:var(--accent-ink)">Финал курса</span></div><div class="body"><h1>Итоговый тест</h1><p style="color:var(--muted);margin:0">'+(MODS.length*FINAL_N)+' вопросов из всех шести модулей. Порог '+PASS+'%. После успешной сдачи откроется сертификат.</p></div></div><div style="margin-top:18px">';
+  if(S.quiz&&S.quiz.kind==='final')h+=viewQuiz();
+  else{const r=S.p.final||{};h+='<section class="card">'+(r.attempts?'<p>Лучший результат: <b>'+r.best+'%</b>, попыток: '+r.attempts+'.</p>':'')+'<button class="btn pri" data-act="startquiz" data-kind="final">'+(r.attempts?'Пройти ещё раз':'Начать итоговый тест')+'</button>'+(finalPassed()?' <button class="btn" data-act="opencert">Сертификат</button>':'')+'</section>';}
+  return h+'</div>';
+}
+function viewCert(){
+  const st=S.p.student||{name:'Имя Фамилия',group:''};
+  return '<button class="back" data-act="go" data-view="home">← К курсу</button><section class="card"><h2 style="font-size:22px;margin-bottom:6px">Ваш сертификат</h2><p style="color:var(--muted)">Дата прохождения курса: <b>'+esc(fmtDate((S.p.final&&S.p.final.passedAt)||todayISO()))+'</b>.'+(isT()&&!finalPassed()?' (Предпросмотр для преподавателя.)':'')+'</p><canvas id="cert" width="1600" height="1131" role="img" aria-label="Сертификат о прохождении курса: '+esc(st.name)+'"></canvas><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn pri" data-act="dlcert">Скачать изображение</button><button class="btn" data-act="go" data-view="home">Закрыть</button></div><p class="meta" style="font-size:13px;color:var(--muted);margin-top:10px">Если скачивание недоступно на вашем устройстве, сделайте снимок экрана.</p></section>';
+}
+function wrapText(c,t,x,y,maxW,lh){const words=t.split(' ');let line='';const lines=[];words.forEach(w=>{const test=line?line+' '+w:w;if(c.measureText(test).width>maxW&&line){lines.push(line);line=w;}else line=test;});if(line)lines.push(line);lines.forEach((l,i)=>c.fillText(l,x,y+i*lh));return y+lines.length*lh;}
+async function drawCert(){
+  const cv=document.getElementById('cert');if(!cv)return;
+  try{await Promise.all(['700 64px Unbounded','500 30px Onest','500 24px "JetBrains Mono"'].map(f=>document.fonts.load(f)));}catch(e){}
+  const W=1600,H=1131,c=cv.getContext('2d'),st=S.p.student||{name:'Имя Фамилия',group:''};
+  const D='Unbounded, Onest, sans-serif',B='Onest, system-ui, sans-serif',M='"JetBrains Mono", monospace';
+  c.fillStyle='#FFFFFF';c.fillRect(0,0,W,H);
+  const cols=['#FF6B6B','#FFB020','#2BD48A','#2AA9F0','#9B7BFF','#FF5FA8'];
+  cols.forEach((k,i)=>{c.fillStyle=k;c.fillRect(i*W/6,0,W/6,26);c.fillRect(i*W/6,H-26,W/6,26);});
+  c.strokeStyle='#D9DCEB';c.lineWidth=3;c.strokeRect(60,70,W-120,H-140);
+  c.fillStyle='#D9DCEB';for(let x=100;x<W-90;x+=40)for(let y=110;y<200;y+=40){c.beginPath();c.arc(x,y,2,0,7);c.fill();}
+  c.textAlign='center';c.fillStyle='#586079';c.font='500 24px '+M;c.fillText('ПМ 1 · РО 1.2 · UI/UX ДИЗАЙН',W/2,150);
+  c.fillStyle='#12152B';c.font='700 92px '+D;c.fillText('СЕРТИФИКАТ',W/2,290);
+  c.fillStyle='#586079';c.font='500 32px '+B;c.fillText('Настоящим подтверждается, что',W/2,370);
+  let fs=68;c.font='700 '+fs+'px '+D;while(c.measureText(st.name).width>1250&&fs>30){fs-=4;c.font='700 '+fs+'px '+D;}
+  c.fillStyle='#12152B';c.fillText(st.name,W/2,470);
+  c.fillStyle=cols[3];c.fillRect(W/2-120,495,240,6);
+  c.fillStyle='#586079';c.font='500 30px '+B;c.fillText(st.group?'группа '+st.group:'',W/2,552);
+  c.fillStyle='#12152B';c.font='500 34px '+B;c.fillText('успешно прошёл(ла) курс',W/2,620);
+  c.font='600 36px '+B;c.textAlign='center';
+  const lines=['«Определять стратегию дизайна и разрабатывать макеты','пользовательского интерфейса относительно функциональности ПО»'];
+  lines.forEach((l,i)=>c.fillText(l,W/2,690+i*50));
+  const f=S.p.final,date=(f&&f.passedAt)||todayISO();
+  const avg=(()=>{const a=MODS.map(m=>S.p.mods[m.id]&&S.p.mods[m.id].best).filter(x=>x!=null);return a.length?Math.round(a.reduce((s,x)=>s+x,0)/a.length):null;})();
+  c.fillStyle='#586079';c.font='500 28px '+B;c.fillText('Итоговый тест: '+(f?f.best+'%':'—')+'   ·   Средний балл по модулям: '+(avg!=null?avg+'%':'—'),W/2,830);
+  c.fillStyle='#12152B';c.font='700 34px '+B;c.fillText('Дата прохождения курса: '+fmtDate(date),W/2,900);
+  c.strokeStyle='#12152B';c.lineWidth=2;c.beginPath();c.moveTo(170,1010);c.lineTo(540,1010);c.stroke();
+  c.fillStyle='#586079';c.font='500 24px '+B;c.textAlign='left';c.fillText('Преподаватель',170,1046);
+  c.textAlign='right';c.font='500 24px '+M;c.fillText('№ UX-'+hash(st.name+'|'+st.group+'|'+date).slice(0,6).toUpperCase(),W-170,1046);
+  cols.forEach((k,i)=>{c.fillStyle=k;c.beginPath();c.arc(W/2-125+i*50,1020,14,0,7);c.fill();});
+}
+function dlCert(){
+  const cv=document.getElementById('cert');if(!cv)return;
+  cv.toBlob(b=>{if(!b){toast('Не удалось подготовить файл');return;}saveFile('Сертификат.png',b,'image/png',(ok,e)=>{if(ok)toast('Файл сохранён');else if(!e||e.code!=='declined')toast('Скачивание недоступно. Сделайте снимок экрана.');});},'image/png');
+}
+
+/* ---------- Результаты и журнал ---------- */
+function makeResult(){
+  const p=S.p;if(!p.student)return '';
+  const o={n:p.student.name,g:p.student.group,ts:Date.now(),m:{},f:null,t:Object.keys(p.tasks).filter(k=>p.tasks[k])};
+  MODS.forEach(m=>{const r=p.mods[m.id];if(r&&r.attempts)o.m[m.id]=[r.best,r.attempts,r.passedAt||''];});
+  if(p.final)o.f=[p.final.best,p.final.attempts,p.final.passedAt||''];
+  return 'UXR1.'+btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_');
+}
+function parseResult(line){
+  line=String(line).trim();if(line.indexOf('UXR1.')!==0)return null;
+  try{const j=JSON.parse(decodeURIComponent(escape(atob(line.slice(5).replace(/-/g,'+').replace(/_/g,'/')))));return j&&j.n?j:null;}catch(e){return null;}
+}
+const keyOf=(n,g)=>String(n).trim().toLowerCase()+'|'+String(g).trim().toLowerCase();
+function addResults(text){
+  let ok=0,bad=0;
+  String(text).split(/\s+/).filter(Boolean).forEach(l=>{
+    const j=parseResult(l);if(!j){bad++;return;}
+    const k=keyOf(j.n,j.g),old=S.J.students[k];
+    if(!old||(old.ts||0)<=(j.ts||0)){S.J.students[k]=Object.assign({},j,{grades:old?old.grades:{}});}
+    ok++;
+  });
+  saveJ();return [ok,bad];
+}
+const avgTests=s=>{const a=Object.values(s.m||{}).map(x=>x[0]);return a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):null;};
+const modsPassed=s=>Object.values(s.m||{}).filter(x=>x[2]).length;
+
+function collectDraft(){
+  const d={};
+  MODS.forEach(m=>{const de=document.getElementById('sd-'+m.id),re=document.getElementById('sr-'+m.id);d[m.id]={date:de?de.value:'',req:re?re.checked:false,code:(S.draft&&S.draft[m.id]&&S.draft[m.id].code)||S.J.codes[m.id]||''};});
+  S.draft=d;return d;
+}
+function initDraft(){
+  if(S.draft)return;
+  const d={};MODS.forEach(m=>{const sc=(S.sched.modules||{})[m.id]||{};d[m.id]={date:sc.date||'',req:!!sc.hash,code:S.J.codes[m.id]||''};});S.draft=d;
+}
+function buildSchedule(){
+  const d=collectDraft(),out={updated:new Date().toISOString(),modules:{}};
+  const npw=document.getElementById('newpw'),nv=npw?npw.value.trim():'';
+  if(nv)out.teacher=pwHash(nv);else if(S.sched.teacher)out.teacher=S.sched.teacher;
+  MODS.forEach(m=>{const x=d[m.id];if(x.req&&!x.code){x.code=genCode();}if(x.code)S.J.codes[m.id]=x.code;const e={};if(x.date)e.date=x.date;if(x.req&&x.code)e.hash=codeHash(m.id,x.code);if(e.date||e.hash)out.modules[m.id]=e;});
+  saveJ();return out;
+}
+async function publishSchedule(){
+  const sch=buildSchedule(),text=JSON.stringify(sch,null,1);
+  S.pubFallback='';
+  try{
+    if(S.standalone){S.pubFallback=text;toast('Расписание готово. Вставьте текст ниже в файл schedule.json.');render();return;}
+    if(!CAP.art)throw {code:'capability_disabled'};
+    await CAP.art.publish({'schedule.json':{content:text,contentType:'application/json'}});
+    S.sched=sch;toast('Расписание опубликовано. Студенты увидят его после обновления страницы.');
+  }catch(e){
+    S.pubFallback=text;toast('Не удалось опубликовать из страницы. Ниже текст для отправки Claude.');
+  }
+  render();
+}
+function viewTeacherSrv(){
+  const link=S.sched.sheet&&String(S.sched.sheet).indexOf('https://')===0?'<p><a class="btn pri" href="'+esc(S.sched.sheet)+'" target="_blank" rel="noopener">Открыть Google Таблицу</a></p>':'<p style="color:var(--muted)">Добавьте ссылку на таблицу в schedule.json (поле sheet), и здесь появится кнопка.</p>';
+  return '<div style="padding-top:24px"></div><div class="mono">Кабинет преподавателя</div><h1 style="font-size:clamp(24px,4vw,34px);margin:6px 0 18px">Журнал в Google Таблице</h1><section class="card"><p>Всё ведётся в вашей Google Таблице: личные коды студентов, результаты тестов, отметки о практике и оценки. Студенты попадают туда автоматически, когда проходят курс.</p><ul><li>Лист «Студенты»: впишите ФИО и группу, затем в меню «Курс UI/UX» нажмите «Выдать коды студентам». Раздайте коды студентам.</li><li>Лист «Расписание»: дата открытия темы, нужен ли код и сам код урока.</li><li>Оценки за ЛПР и СРСП вписывайте прямо в столбцы листа «Студенты». Студент увидит их у себя.</li></ul>'+link+'</section>';
+}
+function viewTeacher(){
+  if(API())return viewTeacherSrv();
+  initDraft();
+  let h='<div style="padding-top:24px"></div><div class="mono">Кабинет преподавателя</div><h1 style="font-size:clamp(24px,4vw,34px);margin:6px 0 18px">Расписание, коды и журнал</h1>';
+  h+='<section class="card"><h2 style="font-size:20px;margin-bottom:6px">Расписание тем и коды уроков</h2><p style="color:var(--muted)">Укажите дату, с которой тема открывается, и при желании включите код. Код вы называете студентам на уроке или в дистанционном чате. После правок нажмите «Опубликовать расписание».</p><div class="tw"><table><thead><tr><th>Модуль</th><th>Открыть с даты</th><th>Нужен код</th><th>Код урока</th><th></th></tr></thead><tbody>';
+  h+=MODS.map((m,i)=>{const x=S.draft[m.id];return '<tr><td><b>'+pad(i+1)+'</b> '+esc(m.short)+'</td><td><input type="date" class="inp" id="sd-'+m.id+'" value="'+esc(x.date)+'" style="min-height:36px;padding:4px 8px;width:160px" aria-label="Дата открытия модуля '+(i+1)+'"></td><td><input type="checkbox" id="sr-'+m.id+'" '+(x.req?'checked':'')+' aria-label="Нужен код для модуля '+(i+1)+'"></td><td>'+(x.code?'<span class="code">'+esc(x.code)+'</span>':'<span class="meta" style="color:var(--muted)">не задан</span>')+'</td><td><button class="btn sm" data-act="newcode" data-mid="'+m.id+'">Новый код</button></td></tr>';}).join('');
+  h+='</tbody></table></div>'+(S.standalone?'<div class="field" style="margin-top:14px;max-width:360px"><label for="newpw">Новый пароль кабинета (необязательно)</label><input class="inp" id="newpw" type="text" autocomplete="off" placeholder="Оставьте пустым, чтобы не менять"></div>':'')+'<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri" data-act="publish">'+(S.standalone?'Подготовить schedule.json':'Опубликовать расписание')+'</button></div>';
+  if(S.pubFallback)h+=(S.standalone?'<div class="note" style="margin-top:14px"><b>Как применить.</b> Скопируйте текст ниже и замените им содержимое файла schedule.json в репозитории GitHub (Edit, затем Commit). Через минуту студенты увидят расписание после обновления страницы.</div>':'<div class="note" style="margin-top:14px"><b>Публикация из страницы недоступна.</b> Скопируйте текст ниже и отправьте Claude в чате с просьбой «обнови расписание в курсе».</div>')+'<textarea class="inp" id="pubtxt" readonly rows="8">'+esc(S.pubFallback)+'</textarea><button class="btn sm" data-act="copypub" style="margin-top:8px">Скопировать</button>';
+  h+='<p class="meta" style="font-size:13px;color:var(--muted);margin-top:12px">Без даты и кода модуль открыт всегда, кроме требования сдать тест предыдущего. Коды в расписании хранятся в виде хэша, открытый текст кода виден только в вашем браузере.</p></section>';
+  h+='<section class="card"><h2 style="font-size:20px;margin-bottom:6px">Журнал</h2><p style="color:var(--muted)">Студенты копируют «Код результата» на главной странице и присылают вам. Вставьте один или несколько кодов (каждый с новой строки).</p><textarea class="inp" id="addres" rows="3" placeholder="UXR1...." aria-label="Коды результатов"></textarea><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn pri sm" data-act="addres">Добавить в журнал</button><button class="btn sm" data-act="csv">Скачать таблицу CSV</button></div>';
+  const rows=Object.keys(S.J.students).map(k=>({k:k,s:S.J.students[k]})).sort((a,b)=>(a.s.g+a.s.n).localeCompare(b.s.g+b.s.n,'ru'));
+  if(!rows.length)h+='<p style="margin-top:14px;color:var(--muted)">Пока никого нет. Добавьте первый код результата.</p>';
+  else{
+    h+='<div class="tw" style="margin-top:14px"><table><thead><tr><th>ФИО</th><th>Группа</th><th>Модули</th><th>Ср. тест</th><th>Итоговый</th><th>Практика</th><th>Сертификат</th><th></th></tr></thead><tbody>';
+    h+=rows.map(r=>{const s=r.s,pr=(s.t||[]).length,gr=Object.keys(s.grades||{}).filter(x=>s.grades[x]!==''&&s.grades[x]!=null).length;return '<tr class="'+(S.sel===r.k?'sel':'')+'"><td><b>'+esc(s.n)+'</b></td><td>'+esc(s.g)+'</td><td>'+modsPassed(s)+' / '+MODS.length+'</td><td>'+(avgTests(s)!=null?avgTests(s)+'%':'—')+'</td><td>'+(s.f?s.f[0]+'%':'—')+'</td><td>сдано '+pr+', оценок '+gr+' из '+TASKS.length+'</td><td>'+(s.f&&s.f[2]?esc(fmtDate(s.f[2])):'—')+'</td><td><button class="btn sm" data-act="sel" data-k="'+esc(r.k)+'">Открыть</button></td></tr>';}).join('');
+    h+='</tbody></table></div>';
+  }
+  h+='</section>';
+  if(S.sel&&S.J.students[S.sel]){
+    const s=S.J.students[S.sel];
+    h+='<section class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start"><div><h2 style="font-size:20px">'+esc(s.n)+'</h2><div class="meta" style="color:var(--muted)">Группа '+esc(s.g)+'</div></div><button class="btn sm" data-act="delstu" data-k="'+esc(S.sel)+'">Удалить из журнала</button></div><h3 style="font-size:16px;margin:16px 0 8px">Тесты</h3><div class="tw"><table><thead><tr><th>Модуль</th><th>Лучший результат</th><th>Попыток</th><th>Сдан</th></tr></thead><tbody>'+MODS.map((m,i)=>{const r=(s.m||{})[m.id];return '<tr><td>'+pad(i+1)+' '+esc(m.short)+'</td><td>'+(r?r[0]+'%':'—')+'</td><td>'+(r?r[1]:'—')+'</td><td>'+(r&&r[2]?esc(fmtDate(r[2])):'—')+'</td></tr>';}).join('')+'<tr><td><b>Итоговый</b></td><td>'+(s.f?s.f[0]+'%':'—')+'</td><td>'+(s.f?s.f[1]:'—')+'</td><td>'+(s.f&&s.f[2]?esc(fmtDate(s.f[2])):'—')+'</td></tr></tbody></table></div>';
+    h+='<h3 style="font-size:16px;margin:18px 0 4px">Оценки за практику (0–100)</h3><p class="meta" style="font-size:13px;color:var(--muted);margin-bottom:10px">Отметка ✓ означает, что студент отметил работу как выполненную.</p><div class="gr">'+TASKS.map(t=>{const done=(s.t||[]).indexOf(t.k)>=0;const v=(s.grades||{})[t.k];return '<div class="field"><label for="gr-'+t.k+'">'+esc(t.kind.replace('ЛПР №','ЛПР ').replace('СРСП №','СРСП '))+(done?' ✓':'')+'</label><input class="inp" id="gr-'+t.k+'" type="number" min="0" max="100" value="'+(v==null?'':esc(v))+'"></div>';}).join('')+'</div><div style="margin-top:12px"><button class="btn pri sm" data-act="savegrades">Сохранить оценки</button></div></section>';
+  }
+  return h+'<footer>Журнал хранится в этом браузере. Чтобы не потерять данные, периодически скачивайте таблицу CSV.</footer>';
+}
+const pwHash=p=>hash('uxc-pw|'+p);
+function viewLogin(){
+  return '<section class="card" style="max-width:480px;margin:40px auto"><div class="mono">Кабинет преподавателя</div><h2 style="font-size:22px;margin:6px 0 14px">Вход для преподавателя</h2><div class="field"><label for="tpw">Пароль</label><input class="inp" id="tpw" type="password" autocomplete="current-password"></div><div id="tpw-err" class="err" role="alert"></div><button class="btn pri" data-act="tcheck">Войти</button></section>';
+}
+function tCheck(){
+  const el=document.getElementById('tpw'),er=document.getElementById('tpw-err');
+  if(!S.sched.teacher){er.textContent='Пароль не настроен. Добавьте его в файл schedule.json.';return;}
+  if(pwHash(el.value)!==S.sched.teacher){er.textContent='Пароль не подходит.';return;}
+  S.teacher=true;S.asStudent=false;try{sessionStorage.setItem('uxc.t','1');}catch(e){}
+  go('teacher');
+}
+function saveFile(name,data,type,cb){
+  if(CAP.dl){CAP.dl.save({filename:name,data:data}).then(()=>cb(true)).catch(e=>cb(false,e));return;}
+  try{
+    const b=data instanceof Blob?data:new Blob([data],{type:type});
+    const u=URL.createObjectURL(b),a=document.createElement('a');
+    a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(u),4000);cb(true);
+  }catch(e){cb(false,e);}
+}
+function csvEsc(v){v=String(v==null?'':v);return /[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+function exportCSV(){
+  const head=['ФИО','Группа'].concat(MODS.map((m,i)=>'Тест '+(i+1))).concat(['Итоговый тест']).concat(TASKS.map(t=>t.kind)).concat(['Дата сертификата']);
+  const rows=Object.keys(S.J.students).map(k=>{const s=S.J.students[k];return [s.n,s.g].concat(MODS.map(m=>{const r=(s.m||{})[m.id];return r?r[0]:'';})).concat([s.f?s.f[0]:'']).concat(TASKS.map(t=>{const v=(s.grades||{})[t.k];return v==null?'':v;})).concat([s.f&&s.f[2]?s.f[2]:'']);});
+  const csv='﻿'+[head].concat(rows).map(r=>r.map(csvEsc).join(';')).join('\r\n');
+  saveFile('журнал.csv',csv,'text/csv;charset=utf-8',(ok,e)=>{if(ok)toast('Файл сохранён');else if(!e||e.code!=='declined')toast('Скачивание недоступно в этом режиме');});
+}
+
+/* ---------- Каркас ---------- */
+function render(){
+  renderTop();
+  const app=document.getElementById('app');
+  let h='';
+  if(S.view==='home')h=viewHome();
+  else if(S.view==='module')h=viewModule();
+  else if(S.view==='final')h=viewFinal();
+  else if(S.view==='cert')h=viewCert();
+  else if(S.view==='teacher'&&S.teacher)h=viewTeacher();
+  else if(S.view==='login'&&!S.teacher)h=viewLogin();
+  else h=viewHome();
+  app.innerHTML=h;
+  if(S.view==='cert')drawCert();
+}
+function go(view,extra){S.view=view;if(extra)Object.assign(S,extra);render();window.scrollTo(0,0);}
+function openMod(mid){
+  const i=modIdx(mid);if(!gate(i).open){render();return;}
+  S.quiz=null;go('module',{mid:mid,tab:'theory'});
+}
+
+document.addEventListener('click',function(e){
+  const t=e.target.closest('[data-act]');if(!t)return;
+  const a=t.dataset.act;
+  if(a==='go'){if(S.view==='teacher')collectDraft();go(t.dataset.view);}
+  else if(a==='asstudent'){S.asStudent=!S.asStudent;if(S.asStudent&&S.view==='teacher')S.view='home';render();}
+  else if(a==='register'){
+    const n=(document.getElementById('reg-name').value||'').trim(),g=(document.getElementById('reg-group').value||'').trim();
+    if(n.split(/\s+/).length<2||n.length<5){document.getElementById('reg-err').textContent='Введите фамилию и имя полностью.';return;}
+    if(!g){document.getElementById('reg-err').textContent='Укажите группу.';return;}
+    S.p.student={name:n,group:g};saveP();render();
+  }
+  else if(a==='openmod')openMod(t.dataset.mid);
+  else if(a==='entercode'){
+    const mid=t.dataset.mid,inp=document.getElementById('code-'+mid),sc=(S.sched.modules||{})[mid];
+    const v=(inp&&inp.value||'').trim();
+    if(API()&&S.code){
+      api('unlock',{code:S.code,mid:mid,lessonCode:v}).then(()=>{const r=S.p.mods[mid]||(S.p.mods[mid]={best:0,attempts:0});r.unlocked='srv';saveP();S.codeErr[mid]='';render();toast('Код принят. Модуль открыт.');}).catch(er=>{S.codeErr[mid]=(er&&er.error)||'Нет связи с журналом. Попробуйте позже.';render();});
+      return;
+    }
+    if(sc&&sc.hash&&codeHash(mid,v)===sc.hash){const r=S.p.mods[mid]||(S.p.mods[mid]={best:0,attempts:0});r.unlocked=sc.hash;saveP();S.codeErr[mid]='';render();toast('Код принят. Модуль открыт.');}
+    else{S.codeErr[mid]='Код не подходит. Проверьте и введите снова.';render();}
+  }
+  else if(a==='tab'){S.tab=t.dataset.tab;render();window.scrollTo(0,0);}
+  else if(a==='task'){const k=t.dataset.k;S.p.tasks[k]=!S.p.tasks[k];saveP();render();}
+  else if(a==='startquiz'){startQuiz(t.dataset.kind);if(t.dataset.kind==='final')S.view='final';else S.tab='test';render();window.scrollTo(0,0);}
+  else if(a==='pick'){const Q=S.quiz;if(Q.sel!==null)return;const k=+t.dataset.i,q=Q.qs[Q.i];Q.sel=k;if(k===q.a)Q.correct++;Q.log.push({q:q.q,ok:k===q.a,chosen:q.o[k],right:q.o[q.a],e:q.e});render();}
+  else if(a==='next'){const Q=S.quiz;if(Q.i+1<Q.qs.length){Q.i++;Q.sel=null;render();}else{finishQuiz();render();}window.scrollTo(0,0);}
+  else if(a==='openfinal'){S.quiz=null;go('final');}
+  else if(a==='opencert')go('cert');
+  else if(a==='dlcert')dlCert();
+  else if(a==='copyres'){const ta=document.getElementById('rescode');const done=()=>toast('Код скопирован. Отправьте его преподавателю.');if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(done).catch(()=>{ta.focus();ta.select();toast('Выделено. Нажмите Копировать в меню.');});}else{ta.focus();ta.select();toast('Выделено. Нажмите Копировать в меню.');}}
+  else if(a==='resetask'){S.resetAsk=true;render();}
+  else if(a==='resetno'){S.resetAsk=false;render();}
+  else if(a==='resetyes'){S.p={student:null,mods:{},final:null,tasks:{}};saveP();S.resetAsk=false;S.quiz=null;render();toast('Прогресс удалён');}
+  else if(a==='newcode'){collectDraft();S.draft[t.dataset.mid].code=genCode();const rq=document.getElementById('sr-'+t.dataset.mid);S.draft[t.dataset.mid].req=true;render();}
+  else if(a==='publish')publishSchedule();
+  else if(a==='copypub'){const ta=document.getElementById('pubtxt');if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(ta.value).then(()=>toast('Скопировано')).catch(()=>{ta.focus();ta.select();});else{ta.focus();ta.select();}}
+  else if(a==='addres'){const ta=document.getElementById('addres');const r=addResults(ta.value);collectDraft();render();toast(r[0]?'Добавлено: '+r[0]+(r[1]?'. Не распознано: '+r[1]:''):'Код не распознан. Проверьте, что он скопирован полностью.');}
+  else if(a==='sel'){collectDraft();S.sel=t.dataset.k;render();}
+  else if(a==='delstu'){delete S.J.students[t.dataset.k];S.sel=null;saveJ();collectDraft();render();}
+  else if(a==='savegrades'){const s=S.J.students[S.sel];if(!s)return;s.grades=s.grades||{};TASKS.forEach(x=>{const el=document.getElementById('gr-'+x.k);if(!el)return;const v=el.value.trim();if(v===''){delete s.grades[x.k];}else{let n=Math.max(0,Math.min(100,Math.round(Number(v))));if(!isNaN(n))s.grades[x.k]=n;}});saveJ();collectDraft();render();toast('Оценки сохранены');}
+  else if(a==='csv')exportCSV();
+  else if(a==='srvlogin'){
+    const code=(document.getElementById('login-code').value||'').trim().toUpperCase();
+    if(!code){S.loginErr='Введите код.';render();return;}
+    api('login',{code:code}).then(j=>{S.code=code;LS.set('uxc.code',code);S.loginErr='';applyLogin(j,false);render();}).catch(er=>{S.loginErr=(er&&er.error)||'Нет связи с журналом. Попробуйте позже.';render();});
+  }
+  else if(a==='srvlogout'){S.code='';LS.set('uxc.code','');S.p={student:null,mods:{},final:null,tasks:{}};LS.set('uxc.p1',S.p);S.grades={};S.quiz=null;render();}
+  else if(a==='tlogin')go('login');
+  else if(a==='tcheck')tCheck();
+  else if(a==='tlogout'){S.teacher=false;S.asStudent=false;try{sessionStorage.removeItem('uxc.t');}catch(e){}go('home');}
+});
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target&&e.target.id==='tpw')tCheck();});
+
+async function init(){
+  render();
+  try{const r=await fetch('schedule.json',{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&j.modules)S.sched=j;}}catch(e){}
+  if(!(window.claude&&window.claude.use)){
+    S.standalone=true;
+    try{if(sessionStorage.getItem('uxc.t')==='1'&&S.sched.teacher)S.teacher=true;}catch(e){}
+    if(API()&&S.code){try{const j=await api('login',{code:S.code});applyLogin(j,true);}catch(e){if(e&&e.error){S.code='';LS.set('uxc.code','');}}}
+  }
+  render();
+  try{
+    if(window.claude&&window.claude.use){
+      const u=await window.claude.use('user');
+      if(u){S.teacher=!!(await u.isOwner())||!!(await u.canEdit());}
+      CAP.art=await window.claude.use('artifact');
+      CAP.dl=await window.claude.use('downloads');
+    }
+  }catch(e){}
+  render();
+}
+init();
+})();
+</script>
